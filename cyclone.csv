@@ -1,0 +1,104 @@
+event_name,year,month,basin,category,max_wind_kmh,min_pressure_hpa,deaths,damage_crore_inr,landfall,landfall_state,surge_m,affected_districts,evacuated_lakhs,track_length_km,duration_days,imd_warning_lead_hrs
+Cyclone_1990_A,1990,5,Bay of Bengal,Cyclonic Storm,107,977,8,430,True,Karnataka,2.8,2,4.5,1294,14,32
+Cyclone_1990_C,1990,7,Arabian Sea,Depression,30,1003,15,1862,True,WB,1.0,7,0.8,1605,10,18
+Cyclone_1990_B,1990,10,Bay of Bengal,Cyclonic Storm,110,976,20,7427,False,Odisha,1.7,25,1.8,845,10,53
+Cyclone_1991_D,1991,4,Arabian Sea,Extremely Severe Cyclonic Storm,214,942,13,17230,True,Odisha,3.4,24,8.5,2709,8,48
+Cyclone_1991_A,1991,7,Bay of Bengal,Depression,55,994,46,12353,False,AP,4.1,27,3.3,2090,8,20
+Cyclone_1991_B,1991,11,Bay of Bengal,Cyclonic Storm,105,978,10,7004,True,AP,3.0,20,6.4,1829,9,27
+Cyclone_1992_B,1992,7,Arabian Sea,Deep Depression,60,993,22,698,True,WB,4.9,11,5.0,1773,3,13
+Cyclone_1992_A,1992,9,Bay of Bengal,Depression,30,1003,29,6987,False,Karnataka,4.6,5,7.2,1952,2,32
+Cyclone_1993_B,1993,5,Bay of Bengal,Very Severe Cyclonic Storm,148,964,28,7857,False,WB,3.9,4,5.1,2601,6,55
+Cyclone_1993_D,1993,9,Arabian Sea,Cyclonic Storm,94,981,22,1878,True,Gujarat,3.9,3,5.5,807,9,72
+Cyclone_1994_D,1994,6,Bay of Bengal,Deep Depression,58,993,14,2581,False,AP,2.3,15,8.8,2374,4,22
+Cyclone_1994_A,1994,9,Arabian Sea,Cyclonic Storm,107,977,3,9490,False,AP,3.7,5,6.2,1224,5,33
+Cyclone_1995_A,1995,7,Arabian Sea,Severe Cyclonic Storm,140,966,28,77,False,Karnataka,0.6,13,0.1,2591,3,24
+Cyclone_1995_B,1995,10,Bay of Bengal,Depression,43,998,3,15055,True,WB,2.1,11,6.4,213,6,50
+Cyclone_1996_D,1996,5,Bay of Bengal,Extremely Severe Cyclonic Storm,220,940,7,16555,False,Kerala,3.2,1,9.3,1440,12,13
+Cyclone_1996_B,1996,7,Bay of Bengal,Very Severe Cyclonic Storm,179,953,112,2856,False,Kerala,4.8,9,1.6,1364,2,45
+Cyclone_1996_C,1996,8,Arabian Sea,Depression,41,999,30,17775,True,Karnataka,3.6,30,7.7,2548,6,42
+Cyclone_1997_A,1997,5,Arabian Sea,Super Cyclonic Storm,257,928,11,3946,True,Gujarat,2.3,12,2.6,2292,10,48
+Cyclone_1997_C,1997,8,Arabian Sea,Deep Depression,49,996,52,118,False,AP,1.8,19,2.4,1364,13,67
+Cyclone_1997_D,1997,11,Arabian Sea,Depression,64,991,7,19678,True,Karnataka,1.7,7,7.5,2058,12,23
+Cyclone_1997_B,1997,11,Arabian Sea,Very Severe Cyclonic Storm,173,955,58,3335,False,WB,3.8,4,1.3,2974,10,60
+Cyclone_1998_B,1998,5,Bay of Bengal,Cyclonic Storm,78,987,3,7294,True,Odisha,0.7,30,6.7,2523,4,46
+Cyclone_1998_A,1998,7,Bay of Bengal,Severe Cyclonic Storm,132,969,21,12558,True,Kerala,1.8,2,0.7,1167,5,70
+Cyclone_1998_C,1998,7,Arabian Sea,Super Cyclonic Storm,269,924,0,8818,False,Odisha,2.9,16,1.9,803,10,60
+Cyclone_1998_D,1998,10,Arabian Sea,Cyclonic Storm,78,987,69,3702,True,Odisha,1.3,13,7.3,651,10,15
+Cyclone_1999_A,1999,7,Bay of Bengal,Deep Depression,64,991,46,7653,True,Maharashtra,2.1,25,7.2,1789,11,34
+Cyclone_1999_C,1999,9,Arabian Sea,Very Severe Cyclonic Storm,177,954,15,15733,True,WB,1.2,1,5.2,1496,11,45
+Orissa Super Cyclone,1999,10,Bay of Bengal,Super Cyclonic Storm,260,940,10000,15924,True,West Bengal,4.7,23,7.7,2593,10,51
+Cyclone_1999_B,1999,11,Arabian Sea,Extremely Severe Cyclonic Storm,224,939,6,7047,False,Karnataka,0.7,25,5.2,765,4,37
+Cyclone_2000_B,2000,3,Bay of Bengal,Very Severe Cyclonic Storm,151,963,52,15390,True,Gujarat,1.1,15,9.4,995,2,35
+Cyclone_2000_C,2000,5,Arabian Sea,Depression,55,994,56,1872,True,WB,2.5,26,7.5,200,5,57
+Cyclone_2000_A,2000,8,Arabian Sea,Super Cyclonic Storm,263,926,0,17536,True,Tamil Nadu,3.5,8,0.7,1360,2,58
+Cyclone_2000_D,2000,11,Arabian Sea,Very Severe Cyclonic Storm,163,959,59,18405,False,AP,3.2,6,6.1,1926,11,21
+Cyclone_2001_B,2001,4,Bay of Bengal,Extremely Severe Cyclonic Storm,240,933,28,14149,False,AP,3.4,19,0.7,2209,3,22
+Cyclone_2001_D,2001,5,Arabian Sea,Deep Depression,50,996,23,12178,True,Karnataka,1.3,20,3.9,2387,14,23
+Cyclone_2001_C,2001,11,Arabian Sea,Cyclonic Storm,99,980,49,17059,True,Gujarat,3.5,3,4.9,1701,8,71
+Cyclone_2001_A,2001,11,Bay of Bengal,Depression,40,999,38,6359,False,Maharashtra,1.9,5,3.4,2414,6,59
+Cyclone_2002_B,2002,6,Arabian Sea,Very Severe Cyclonic Storm,167,957,42,946,False,Maharashtra,2.0,4,1.9,1565,14,55
+Cyclone_2002_D,2002,6,Bay of Bengal,Depression,56,994,9,16863,True,Maharashtra,1.2,18,3.3,2766,3,58
+Cyclone_2002_C,2002,11,Bay of Bengal,Super Cyclonic Storm,273,922,3,16056,True,Maharashtra,4.5,2,9.1,2633,7,26
+Cyclone_2003_C,2003,4,Arabian Sea,Super Cyclonic Storm,277,921,48,367,False,AP,2.1,18,7.2,2540,13,35
+Cyclone_2003_A,2003,6,Bay of Bengal,Cyclonic Storm,89,983,13,19938,False,Maharashtra,0.9,14,3.1,641,8,45
+Cyclone_2003_B,2003,9,Arabian Sea,Extremely Severe Cyclonic Storm,239,934,9,14023,True,Karnataka,1.4,23,4.7,2692,12,55
+Cyclone_2004_B,2004,7,Bay of Bengal,Extremely Severe Cyclonic Storm,206,945,3,18667,False,Maharashtra,4.3,8,5.3,865,14,56
+Cyclone_2004_D,2004,10,Arabian Sea,Depression,46,997,9,1469,False,Gujarat,3.4,1,6.3,2324,10,44
+Cyclone_2004_A,2004,11,Arabian Sea,Severe Cyclonic Storm,124,972,0,14789,True,Kerala,3.1,4,8.4,975,4,60
+Cyclone_2005_B,2005,9,Bay of Bengal,Super Cyclonic Storm,257,928,39,3335,True,Kerala,2.0,21,8.1,1739,8,49
+Cyclone_2005_A,2005,10,Bay of Bengal,Cyclonic Storm,89,983,6,14772,True,Tamil Nadu,1.8,26,7.2,1896,9,70
+Cyclone_2005_D,2005,11,Bay of Bengal,Depression,58,993,44,14750,False,Maharashtra,0.8,16,2.7,2625,3,36
+Cyclone_2006_B,2006,2,Arabian Sea,Extremely Severe Cyclonic Storm,236,935,4,5252,False,Karnataka,2.4,29,1.9,678,8,60
+Cyclone_2006_C,2006,2,Arabian Sea,Very Severe Cyclonic Storm,161,959,11,17717,False,AP,3.5,19,2.4,606,14,34
+Cyclone_2006_D,2006,6,Arabian Sea,Extremely Severe Cyclonic Storm,230,937,18,4448,True,Maharashtra,4.1,10,1.0,398,11,63
+Cyclone_2007_A,2007,5,Arabian Sea,Cyclonic Storm,78,987,10,13407,True,WB,2.7,25,2.5,1437,2,36
+Cyclone_2007_C,2007,6,Bay of Bengal,Severe Cyclonic Storm,105,978,33,9230,False,Tamil Nadu,1.5,7,0.7,2492,11,13
+Cyclone_2008_C,2008,8,Bay of Bengal,Depression,39,1000,15,1960,False,WB,0.5,25,3.5,2061,10,34
+Cyclone_2008_D,2008,9,Bay of Bengal,Super Cyclonic Storm,266,925,7,916,False,Tamil Nadu,1.9,11,6.5,1232,9,68
+Cyclone_2008_B,2008,12,Arabian Sea,Extremely Severe Cyclonic Storm,224,939,2,17804,True,Kerala,1.3,11,8.9,1568,11,69
+Cyclone_2009_B,2009,7,Bay of Bengal,Extremely Severe Cyclonic Storm,207,944,39,18815,True,WB,4.1,29,9.6,1587,9,44
+Cyclone_2009_A,2009,8,Bay of Bengal,Deep Depression,45,998,27,19960,False,Kerala,4.5,6,1.9,726,3,31
+Cyclone_2009_C,2009,11,Bay of Bengal,Extremely Severe Cyclonic Storm,239,934,24,13722,True,Odisha,1.5,19,2.0,964,10,52
+Cyclone_2010_B,2010,11,Bay of Bengal,Cyclonic Storm,76,987,78,15899,False,AP,0.8,12,5.2,2886,8,25
+Cyclone_2010_C,2010,12,Bay of Bengal,Cyclonic Storm,79,986,26,2491,True,Kerala,3.0,12,8.1,766,11,19
+Cyclone_2011_D,2011,5,Bay of Bengal,Cyclonic Storm,84,985,14,9435,True,Gujarat,4.6,11,8.0,2892,9,51
+Cyclone_2011_C,2011,9,Bay of Bengal,Severe Cyclonic Storm,114,975,9,18061,True,WB,2.0,30,3.3,2746,13,22
+Cyclone_2012_A,2012,1,Arabian Sea,Depression,63,992,86,16586,False,Karnataka,2.9,3,6.2,1215,4,63
+Cyclone_2012_B,2012,10,Arabian Sea,Super Cyclonic Storm,246,931,8,12628,True,Maharashtra,1.8,7,0.2,1559,5,57
+Cyclone_2013_A,2013,4,Bay of Bengal,Depression,33,1002,3,14260,True,Maharashtra,2.4,5,7.1,830,13,23
+Cyclone_2013_C,2013,5,Arabian Sea,Very Severe Cyclonic Storm,167,957,7,10775,True,Tamil Nadu,0.8,9,3.4,766,5,33
+Cyclone Phailin,2013,9,Bay of Bengal,Very Severe Cyclonic Storm,220,940,45,17476,True,Gujarat,5.6,16,13.9,2720,10,70
+Cyclone_2013_D,2013,10,Bay of Bengal,Super Cyclonic Storm,250,930,7,5894,False,Karnataka,4.9,15,4.2,1922,7,42
+Cyclone_2013_B,2013,12,Arabian Sea,Deep Depression,47,997,21,6272,True,Odisha,1.2,19,6.6,1198,6,47
+Cyclone_2014_D,2014,2,Bay of Bengal,Cyclonic Storm,83,985,58,11860,False,Karnataka,4.0,26,0.8,1882,11,37
+Cyclone_2014_A,2014,3,Bay of Bengal,Super Cyclonic Storm,259,927,3,9927,True,AP,2.7,16,9.5,305,12,70
+Cyclone_2014_B,2014,8,Arabian Sea,Super Cyclonic Storm,267,924,37,17621,True,Kerala,3.0,15,0.9,1441,5,28
+Cyclone Hudhud,2014,10,Bay of Bengal,Very Severe Cyclonic Storm,185,950,124,26653,True,Andhra Pradesh,4.9,34,4.9,2380,11,59
+Cyclone_2014_C,2014,10,Arabian Sea,Deep Depression,40,999,5,9137,False,WB,2.4,5,2.4,677,5,65
+Cyclone_2015_B,2015,10,Bay of Bengal,Deep Depression,58,993,22,17886,False,AP,2.8,9,4.0,2760,4,54
+Cyclone_2016_A,2016,5,Bay of Bengal,Deep Depression,68,990,8,8942,False,WB,1.6,24,2.8,506,3,72
+Cyclone_2016_C,2016,11,Arabian Sea,Deep Depression,50,996,19,1847,True,Gujarat,2.3,23,0.2,623,3,65
+Cyclone Vardah,2016,12,Bay of Bengal,Very Severe Cyclonic Storm,130,970,18,40114,True,Tamil Nadu,4.9,32,4.1,1924,4,66
+Cyclone_2017_D,2017,9,Bay of Bengal,Deep Depression,61,992,25,14566,False,WB,1.8,21,6.5,796,2,46
+Cyclone_2017_A,2017,11,Arabian Sea,Very Severe Cyclonic Storm,152,962,23,8559,True,Kerala,0.8,8,0.1,2294,13,52
+Cyclone_2018_D,2018,12,Arabian Sea,Depression,41,999,15,14924,False,Tamil Nadu,2.7,9,5.5,2372,9,21
+Cyclone Fani,2019,4,Bay of Bengal,Extremely Severe Cyclonic Storm,250,932,89,36586,True,Gujarat,3.5,7,6.6,1075,6,51
+Cyclone_2019_A,2019,5,Bay of Bengal,Super Cyclonic Storm,278,921,11,14855,False,Tamil Nadu,0.8,18,3.6,1424,5,22
+Cyclone_2019_C,2019,7,Arabian Sea,Extremely Severe Cyclonic Storm,231,936,41,12914,True,Kerala,3.3,23,4.1,1247,3,56
+Cyclone_2020_D,2020,1,Bay of Bengal,Extremely Severe Cyclonic Storm,237,934,0,6023,False,Gujarat,1.6,8,1.2,2760,10,43
+Cyclone Amphan,2020,5,Bay of Bengal,Super Cyclonic Storm,270,920,128,25050,True,West Bengal,5.5,27,8.1,2489,6,45
+Cyclone_2020_B,2020,5,Arabian Sea,Extremely Severe Cyclonic Storm,229,937,13,8421,True,Kerala,2.1,26,5.3,1553,13,43
+Cyclone_2020_C,2020,8,Arabian Sea,Severe Cyclonic Storm,134,968,66,13911,False,Karnataka,0.7,3,0.5,850,9,51
+Cyclone Tauktae,2021,5,Arabian Sea,Extremely Severe Cyclonic Storm,210,952,198,22133,True,Andhra Pradesh,4.3,12,10.3,1977,3,58
+Cyclone Yaas,2021,5,Bay of Bengal,Very Severe Cyclonic Storm,155,960,19,9587,True,Tamil Nadu,1.9,28,4.7,2085,8,63
+Cyclone_2021_A,2021,5,Arabian Sea,Extremely Severe Cyclonic Storm,209,944,24,18779,True,AP,2.2,14,0.2,738,6,44
+Cyclone_2021_C,2021,5,Arabian Sea,Cyclonic Storm,85,984,18,1282,True,Karnataka,4.0,15,1.4,2873,9,32
+Cyclone_2021_D,2021,9,Bay of Bengal,Deep Depression,40,999,16,2942,True,Tamil Nadu,0.7,19,7.9,1378,13,14
+Cyclone_2022_A,2022,6,Bay of Bengal,Super Cyclonic Storm,276,921,17,3346,True,Gujarat,3.1,29,5.1,1008,2,37
+Cyclone_2022_D,2022,9,Arabian Sea,Deep Depression,57,994,10,12803,False,Maharashtra,3.3,30,9.4,871,14,55
+Cyclone Mandous,2022,12,Bay of Bengal,Cyclonic Storm,65,1000,0,19311,True,Gujarat,4.9,19,11.0,1430,9,60
+Cyclone_2022_C,2022,12,Arabian Sea,Severe Cyclonic Storm,107,977,8,16252,True,Gujarat,2.5,24,0.7,1790,2,34
+Cyclone Biparjoy,2023,6,Arabian Sea,Extremely Severe Cyclonic Storm,150,940,2,41967,True,Odisha,3.1,7,9.0,1703,10,41
+Cyclone_2023_C,2023,8,Bay of Bengal,Cyclonic Storm,97,980,4,11592,True,WB,1.9,13,3.9,2949,12,71
+Cyclone_2023_D,2023,9,Arabian Sea,Extremely Severe Cyclonic Storm,237,934,3,11516,False,Maharashtra,2.5,29,9.5,647,12,46
+Cyclone_2023_B,2023,12,Arabian Sea,Severe Cyclonic Storm,138,967,11,8500,True,Karnataka,2.0,1,6.6,1971,8,55
