@@ -1,0 +1,614 @@
+event_type,year,start_doy,start_date,duration_days,state,peak_temp_c,temp_anomaly_c,threshold_exceeded_c,estimated_deaths,severity,districts_affected,imd_alert
+Coldwave,1980,41,1980-02-10,6,HP,3.2,-6.8,6.8,0,Moderate,16,Orange
+Heatwave,1980,77,1980-03-17,13,Arunachal Pradesh,44.6,4.6,4.6,84,Moderate,18,Orange
+Heatwave,1980,93,1980-04-02,8,Andhra Pradesh,45.1,5.1,5.1,96,Moderate,12,Yellow
+Heatwave,1980,139,1980-05-18,11,Madhya Pradesh,45.1,5.1,5.1,18,Moderate,5,Orange
+Coldwave,1981,33,1981-02-02,8,Delhi,7.3,-2.7,2.7,4,Mild,4,Orange
+Coldwave,1981,38,1981-02-07,8,J&K,1.1,-8.9,8.9,13,Moderate,3,Orange
+Coldwave,1981,43,1981-02-12,3,Delhi,4.5,-5.5,5.5,5,Mild,15,Orange
+Heatwave,1981,75,1981-03-16,5,Andhra Pradesh,44.8,4.8,4.8,9,Moderate,10,Orange
+Heatwave,1981,80,1981-03-21,15,Rajasthan,42.8,2.8,2.8,19,Mild,7,Orange
+Heatwave,1981,81,1981-03-22,9,Goa,45.5,5.5,5.5,188,Moderate,2,Orange
+Heatwave,1981,101,1981-04-11,13,Maharashtra,47.0,7.0,7.0,1,Moderate,18,Orange
+Heatwave,1981,162,1981-06-11,12,Andhra Pradesh,44.5,4.5,4.5,39,Moderate,7,Orange
+Heatwave,1981,171,1981-06-20,3,Telangana,47.2,7.2,7.2,7,Severe,14,Red
+Coldwave,1982,-25,1982-12-06,5,Uttarakhand,3.3,-6.7,6.7,12,Moderate,16,Yellow
+Coldwave,1982,-21,1982-12-10,6,Rajasthan,3.4,-6.6,6.6,5,Moderate,19,Yellow
+Coldwave,1982,-21,1982-12-10,10,Rajasthan,4.1,-5.9,5.9,0,Mild,2,Yellow
+Coldwave,1982,-13,1982-12-18,9,Delhi,1.0,-9.0,9.0,10,Moderate,2,Yellow
+Coldwave,1982,2,1982-01-02,4,J&K,0.9,-9.1,9.1,5,Moderate,13,Yellow
+Coldwave,1982,37,1982-02-06,2,UP,5.6,-4.4,4.4,1,Mild,8,Orange
+Coldwave,1982,45,1982-02-14,6,Rajasthan,3.0,-7.0,7.0,9,Moderate,7,Yellow
+Coldwave,1982,47,1982-02-16,7,Uttarakhand,-2.7,-12.7,12.7,6,Severe,10,Yellow
+Heatwave,1982,92,1982-04-02,13,Andhra Pradesh,47.9,7.9,7.9,19,Severe,22,Red
+Heatwave,1982,100,1982-04-10,6,Delhi,42.1,2.1,2.1,9,Mild,9,Yellow
+Heatwave,1982,109,1982-04-19,8,Punjab,49.1,9.1,9.1,2,Severe,20,Yellow
+Heatwave,1982,114,1982-04-24,4,Manipur,40.8,0.8,0.8,7,Mild,19,Red
+Heatwave,1982,114,1982-04-24,9,Bihar,40.2,0.2,0.2,169,Mild,23,Yellow
+Heatwave,1982,121,1982-05-01,5,Nagaland,49.8,9.8,9.8,90,Severe,10,Orange
+Heatwave,1982,132,1982-05-12,11,Gujarat,45.2,5.2,5.2,68,Moderate,17,Yellow
+Heatwave,1982,164,1982-06-13,8,Kerala,48.7,8.7,8.7,115,Severe,4,Orange
+Heatwave,1982,169,1982-06-18,6,Tripura,48.5,8.5,8.5,48,Severe,5,Yellow
+Heatwave,1982,174,1982-06-23,15,Tamil Nadu,47.4,7.4,7.4,128,Severe,21,Yellow
+Heatwave,1982,175,1982-06-24,12,Assam,48.0,8.0,8.0,156,Severe,21,Yellow
+Coldwave,1983,13,1983-01-13,9,HP,-1.1,-11.1,11.1,1,Severe,19,Orange
+Coldwave,1983,24,1983-01-24,9,J&K,-1.4,-11.4,11.4,1,Severe,16,Red
+Heatwave,1983,79,1983-03-20,11,West Bengal,47.9,7.9,7.9,2,Severe,25,Orange
+Heatwave,1983,81,1983-03-22,6,Madhya Pradesh,49.1,9.1,9.1,65,Severe,18,Orange
+Heatwave,1983,93,1983-04-03,6,West Bengal,48.6,8.6,8.6,24,Severe,21,Red
+Heatwave,1983,96,1983-04-06,11,Odisha,48.8,8.8,8.8,12,Severe,22,Yellow
+Heatwave,1983,97,1983-04-07,3,Delhi,44.4,4.4,4.4,38,Moderate,5,Red
+Heatwave,1983,102,1983-04-12,5,Punjab,43.9,3.9,3.9,16,Mild,13,Orange
+Heatwave,1983,115,1983-04-25,15,Tamil Nadu,49.5,9.5,9.5,37,Severe,10,Orange
+Heatwave,1983,119,1983-04-29,11,Himachal Pradesh,43.7,3.7,3.7,18,Mild,24,Orange
+Heatwave,1983,123,1983-05-03,9,Uttarakhand,44.7,4.7,4.7,88,Moderate,3,Orange
+Heatwave,1983,130,1983-05-10,7,Himachal Pradesh,44.0,4.0,4.0,59,Mild,2,Orange
+Heatwave,1983,143,1983-05-23,5,Haryana,45.9,5.9,5.9,1,Moderate,6,Yellow
+Heatwave,1983,147,1983-05-27,5,Goa,45.5,5.5,5.5,42,Moderate,6,Red
+Heatwave,1983,150,1983-05-30,13,Chhattisgarh,48.7,8.7,8.7,141,Severe,22,Yellow
+Heatwave,1983,155,1983-06-04,14,Jharkhand,48.7,8.7,8.7,92,Severe,17,Yellow
+Heatwave,1983,161,1983-06-10,7,West Bengal,44.2,4.2,4.2,78,Moderate,2,Red
+Coldwave,1984,-26,1984-12-04,9,Delhi,4.4,-5.6,5.6,40,Mild,14,Red
+Coldwave,1984,-19,1984-12-11,6,HP,1.6,-8.4,8.4,13,Moderate,11,Red
+Coldwave,1984,15,1984-01-15,8,HP,2.9,-7.1,7.1,2,Moderate,6,Orange
+Coldwave,1984,43,1984-02-12,6,MP,4.9,-5.1,5.1,20,Mild,17,Yellow
+Coldwave,1984,56,1984-02-25,6,Delhi,0.9,-9.1,9.1,6,Moderate,7,Yellow
+Heatwave,1984,90,1984-03-30,12,Gujarat,41.5,1.5,1.5,89,Mild,3,Orange
+Heatwave,1984,92,1984-04-01,5,Punjab,44.3,4.3,4.3,5,Moderate,9,Red
+Heatwave,1984,94,1984-04-03,3,Nagaland,45.6,5.6,5.6,43,Moderate,15,Orange
+Heatwave,1984,106,1984-04-15,11,Telangana,42.3,2.3,2.3,2,Mild,18,Red
+Heatwave,1984,125,1984-05-04,6,West Bengal,47.6,7.6,7.6,120,Severe,22,Orange
+Heatwave,1984,126,1984-05-05,5,Odisha,43.8,3.8,3.8,16,Mild,17,Orange
+Heatwave,1984,127,1984-05-06,12,Haryana,43.5,3.5,3.5,43,Mild,17,Orange
+Coldwave,1985,-19,1985-12-12,4,UP,1.9,-8.1,8.1,9,Moderate,11,Yellow
+Coldwave,1985,-19,1985-12-12,9,Bihar,1.5,-8.5,8.5,0,Moderate,6,Yellow
+Coldwave,1985,16,1985-01-16,3,Bihar,2.9,-7.1,7.1,32,Moderate,16,Red
+Coldwave,1985,27,1985-01-27,2,Haryana,1.0,-9.0,9.0,25,Moderate,18,Red
+Coldwave,1985,31,1985-01-31,10,Punjab,6.3,-3.7,3.7,0,Mild,6,Orange
+Coldwave,1985,35,1985-02-04,4,MP,4.0,-6.0,6.0,3,Mild,5,Yellow
+Coldwave,1985,40,1985-02-09,8,J&K,3.6,-6.4,6.4,2,Moderate,12,Yellow
+Coldwave,1985,43,1985-02-12,5,UP,0.1,-9.9,9.9,6,Moderate,12,Orange
+Heatwave,1985,92,1985-04-02,9,Odisha,47.6,7.6,7.6,135,Severe,15,Orange
+Heatwave,1985,97,1985-04-07,12,Jharkhand,46.5,6.5,6.5,6,Moderate,24,Orange
+Heatwave,1985,105,1985-04-15,7,Haryana,42.9,2.9,2.9,32,Mild,21,Red
+Heatwave,1985,124,1985-05-04,14,Assam,49.2,9.2,9.2,28,Severe,20,Red
+Heatwave,1985,136,1985-05-16,15,Uttar Pradesh,44.4,4.4,4.4,18,Moderate,19,Yellow
+Heatwave,1985,140,1985-05-20,13,Telangana,47.6,7.6,7.6,135,Severe,16,Red
+Heatwave,1985,146,1985-05-26,11,Karnataka,45.0,5.0,5.0,10,Moderate,2,Yellow
+Heatwave,1985,147,1985-05-27,4,Tamil Nadu,48.7,8.7,8.7,2,Severe,11,Orange
+Heatwave,1985,149,1985-05-29,6,Odisha,48.1,8.1,8.1,43,Severe,15,Red
+Heatwave,1985,154,1985-06-03,13,Manipur,49.0,9.0,9.0,43,Severe,4,Red
+Heatwave,1985,161,1985-06-10,8,Tripura,41.2,1.2,1.2,61,Mild,4,Red
+Heatwave,1985,165,1985-06-14,15,Kerala,48.9,8.9,8.9,4,Severe,3,Yellow
+Heatwave,1985,167,1985-06-16,8,Rajasthan,47.7,7.7,7.7,34,Severe,6,Yellow
+Heatwave,1985,167,1985-06-16,12,Uttar Pradesh,43.7,3.7,3.7,12,Mild,5,Orange
+Heatwave,1985,175,1985-06-24,9,Telangana,45.6,5.6,5.6,20,Moderate,19,Red
+Coldwave,1986,-24,1986-12-07,4,Punjab,4.6,-5.4,5.4,28,Mild,17,Red
+Coldwave,1986,-11,1986-12-20,2,J&K,3.0,-7.0,7.0,9,Moderate,3,Yellow
+Coldwave,1986,-3,1986-12-28,2,Uttarakhand,1.0,-9.0,9.0,7,Moderate,11,Orange
+Coldwave,1986,7,1986-01-07,5,Rajasthan,6.1,-3.9,3.9,4,Mild,3,Orange
+Heatwave,1986,77,1986-03-18,9,Odisha,45.0,5.0,5.0,4,Moderate,25,Yellow
+Heatwave,1986,81,1986-03-22,6,Gujarat,44.7,4.7,4.7,43,Moderate,13,Yellow
+Heatwave,1986,93,1986-04-03,11,Andhra Pradesh,43.9,3.9,3.9,77,Mild,8,Orange
+Heatwave,1986,94,1986-04-04,3,Odisha,43.3,3.3,3.3,37,Mild,16,Orange
+Heatwave,1986,107,1986-04-17,5,Tripura,44.2,4.2,4.2,64,Moderate,18,Red
+Heatwave,1986,131,1986-05-11,6,Andhra Pradesh,45.6,5.6,5.6,100,Moderate,7,Red
+Heatwave,1986,140,1986-05-20,7,Punjab,45.7,5.7,5.7,190,Moderate,14,Orange
+Heatwave,1986,148,1986-05-28,4,Andhra Pradesh,46.1,6.1,6.1,109,Moderate,6,Red
+Heatwave,1986,156,1986-06-05,3,Maharashtra,45.9,5.9,5.9,75,Moderate,9,Orange
+Heatwave,1986,157,1986-06-06,10,Tripura,44.2,4.2,4.2,120,Moderate,21,Yellow
+Heatwave,1986,157,1986-06-06,13,Delhi,43.2,3.2,3.2,22,Mild,21,Orange
+Heatwave,1986,159,1986-06-08,10,Karnataka,45.2,5.2,5.2,0,Moderate,10,Orange
+Heatwave,1986,165,1986-06-14,15,Goa,43.0,3.0,3.0,33,Mild,8,Yellow
+Coldwave,1987,-19,1987-12-12,2,J&K,1.1,-8.9,8.9,19,Moderate,17,Orange
+Coldwave,1987,-6,1987-12-25,3,Uttarakhand,2.0,-8.0,8.0,14,Moderate,14,Orange
+Coldwave,1987,17,1987-01-17,3,HP,0.9,-9.1,9.1,4,Moderate,9,Orange
+Coldwave,1987,44,1987-02-13,9,J&K,-4.7,-14.7,14.7,11,Severe,10,Orange
+Coldwave,1987,58,1987-02-27,8,HP,3.4,-6.6,6.6,4,Moderate,7,Yellow
+Heatwave,1987,86,1987-03-27,15,Delhi,45.3,5.3,5.3,50,Moderate,5,Red
+Heatwave,1987,136,1987-05-16,6,Himachal Pradesh,44.1,4.1,4.1,8,Moderate,15,Yellow
+Heatwave,1987,137,1987-05-17,11,Arunachal Pradesh,50.4,10.4,10.4,36,Severe,6,Yellow
+Heatwave,1987,145,1987-05-25,15,Rajasthan,45.2,5.2,5.2,15,Moderate,18,Yellow
+Heatwave,1987,157,1987-06-06,6,Arunachal Pradesh,46.2,6.2,6.2,18,Moderate,20,Orange
+Coldwave,1988,-5,1988-12-25,6,HP,6.8,-3.2,3.2,18,Mild,12,Yellow
+Coldwave,1988,0,1987-12-31,6,HP,1.2,-8.8,8.8,5,Moderate,15,Yellow
+Coldwave,1988,2,1988-01-02,4,Bihar,0.6,-9.4,9.4,6,Moderate,17,Red
+Coldwave,1988,42,1988-02-11,2,J&K,9.8,-0.2,0.2,1,Mild,18,Orange
+Heatwave,1988,98,1988-04-07,8,Gujarat,45.1,5.1,5.1,48,Moderate,3,Yellow
+Heatwave,1988,102,1988-04-11,7,Madhya Pradesh,47.9,7.9,7.9,36,Severe,6,Orange
+Heatwave,1988,118,1988-04-27,14,Jharkhand,45.9,5.9,5.9,77,Moderate,9,Yellow
+Heatwave,1988,126,1988-05-05,3,Arunachal Pradesh,40.7,0.7,0.7,166,Mild,23,Orange
+Heatwave,1988,131,1988-05-10,5,Kerala,47.0,7.0,7.0,51,Moderate,4,Red
+Heatwave,1988,132,1988-05-11,5,Odisha,44.4,4.4,4.4,20,Moderate,2,Yellow
+Heatwave,1988,139,1988-05-18,5,Goa,41.7,1.7,1.7,32,Mild,2,Red
+Heatwave,1988,140,1988-05-19,13,Jharkhand,46.8,6.8,6.8,48,Moderate,16,Red
+Heatwave,1988,157,1988-06-05,5,Telangana,48.4,8.4,8.4,12,Severe,11,Yellow
+Heatwave,1988,157,1988-06-05,11,Assam,43.6,3.6,3.6,10,Mild,25,Orange
+Heatwave,1988,163,1988-06-11,14,Odisha,46.2,6.2,6.2,111,Moderate,24,Red
+Heatwave,1988,170,1988-06-18,8,Bihar,42.6,2.6,2.6,68,Mild,21,Yellow
+Heatwave,1988,172,1988-06-20,5,Gujarat,45.5,5.5,5.5,9,Moderate,9,Red
+Coldwave,1989,-16,1989-12-15,7,J&K,5.4,-4.6,4.6,4,Mild,11,Red
+Coldwave,1989,1,1989-01-01,9,UP,0.0,-10.0,10.0,6,Moderate,18,Orange
+Coldwave,1989,17,1989-01-17,10,Bihar,0.9,-9.1,9.1,0,Moderate,5,Yellow
+Coldwave,1989,41,1989-02-10,6,Punjab,1.9,-8.1,8.1,6,Moderate,18,Orange
+Coldwave,1989,47,1989-02-16,4,Uttarakhand,1.4,-8.6,8.6,7,Moderate,15,Red
+Coldwave,1989,55,1989-02-24,9,Haryana,1.5,-8.5,8.5,2,Moderate,8,Red
+Heatwave,1989,91,1989-04-01,7,Arunachal Pradesh,48.4,8.4,8.4,16,Severe,14,Red
+Heatwave,1989,93,1989-04-03,6,Himachal Pradesh,47.3,7.3,7.3,126,Severe,7,Red
+Heatwave,1989,104,1989-04-14,13,Tripura,48.0,8.0,8.0,152,Severe,25,Orange
+Heatwave,1989,105,1989-04-15,5,Gujarat,42.5,2.5,2.5,0,Mild,9,Orange
+Heatwave,1989,119,1989-04-29,15,Haryana,42.1,2.1,2.1,28,Mild,22,Red
+Heatwave,1989,127,1989-05-07,9,Tamil Nadu,44.7,4.7,4.7,36,Moderate,7,Red
+Heatwave,1989,143,1989-05-23,5,Delhi,40.0,0.0,0.0,55,Mild,3,Red
+Heatwave,1989,151,1989-05-31,10,West Bengal,46.1,6.1,6.1,127,Moderate,19,Yellow
+Heatwave,1989,153,1989-06-02,9,Delhi,44.5,4.5,4.5,8,Moderate,10,Red
+Coldwave,1990,19,1990-01-19,10,Delhi,1.4,-8.6,8.6,5,Moderate,18,Yellow
+Coldwave,1990,48,1990-02-17,10,Rajasthan,2.1,-7.9,7.9,0,Moderate,17,Orange
+Heatwave,1990,88,1990-03-29,4,Kerala,46.5,6.5,6.5,4,Moderate,16,Orange
+Heatwave,1990,91,1990-04-01,3,Uttarakhand,46.4,6.4,6.4,16,Moderate,8,Yellow
+Coldwave,1991,-30,1991-12-01,5,Delhi,7.7,-2.3,2.3,3,Mild,17,Red
+Coldwave,1991,-22,1991-12-09,2,J&K,4.3,-5.7,5.7,8,Mild,12,Yellow
+Coldwave,1991,-10,1991-12-21,2,Uttarakhand,2.1,-7.9,7.9,11,Moderate,10,Orange
+Coldwave,1991,5,1991-01-05,4,UP,-0.1,-10.1,10.1,2,Severe,16,Red
+Coldwave,1991,8,1991-01-08,6,J&K,3.4,-6.6,6.6,6,Moderate,4,Orange
+Coldwave,1991,10,1991-01-10,3,Delhi,5.5,-4.5,4.5,7,Mild,6,Orange
+Coldwave,1991,54,1991-02-23,10,Uttarakhand,-1.3,-11.3,11.3,0,Severe,3,Orange
+Coldwave,1991,56,1991-02-25,4,Bihar,3.1,-6.9,6.9,18,Moderate,10,Orange
+Heatwave,1991,79,1991-03-20,8,Nagaland,45.1,5.1,5.1,16,Moderate,4,Orange
+Heatwave,1991,100,1991-04-10,10,Uttar Pradesh,46.1,6.1,6.1,14,Moderate,13,Orange
+Heatwave,1991,108,1991-04-18,7,Haryana,46.1,6.1,6.1,99,Moderate,3,Red
+Heatwave,1991,138,1991-05-18,12,Himachal Pradesh,51.2,11.2,11.2,61,Severe,10,Yellow
+Heatwave,1991,147,1991-05-27,9,Himachal Pradesh,45.8,5.8,5.8,42,Moderate,18,Red
+Heatwave,1991,157,1991-06-06,11,Andhra Pradesh,47.1,7.1,7.1,16,Severe,21,Orange
+Heatwave,1991,162,1991-06-11,14,Manipur,46.5,6.5,6.5,10,Moderate,9,Yellow
+Heatwave,1991,167,1991-06-16,11,Rajasthan,47.9,7.9,7.9,19,Severe,11,Red
+Coldwave,1992,-4,1992-12-26,5,J&K,2.0,-8.0,8.0,0,Moderate,13,Orange
+Coldwave,1992,15,1992-01-15,4,Bihar,-0.7,-10.7,10.7,2,Severe,16,Yellow
+Coldwave,1992,19,1992-01-19,6,MP,0.2,-9.8,9.8,1,Moderate,15,Red
+Coldwave,1992,36,1992-02-05,4,Rajasthan,4.0,-6.0,6.0,8,Mild,4,Orange
+Coldwave,1992,39,1992-02-08,10,MP,3.1,-6.9,6.9,19,Moderate,17,Red
+Heatwave,1992,89,1992-03-29,13,Delhi,50.4,10.4,10.4,40,Severe,5,Yellow
+Heatwave,1992,94,1992-04-03,7,Kerala,45.6,5.6,5.6,19,Moderate,22,Yellow
+Heatwave,1992,130,1992-05-09,10,Madhya Pradesh,44.9,4.9,4.9,11,Moderate,7,Red
+Heatwave,1992,134,1992-05-13,11,Kerala,45.3,5.3,5.3,50,Moderate,3,Orange
+Coldwave,1993,2,1993-01-02,10,HP,-0.0,-10.0,10.0,6,Moderate,15,Yellow
+Coldwave,1993,6,1993-01-06,8,Punjab,-2.1,-12.1,12.1,1,Severe,19,Yellow
+Coldwave,1993,28,1993-01-28,5,HP,1.8,-8.2,8.2,17,Moderate,8,Red
+Coldwave,1993,41,1993-02-10,9,Delhi,-0.1,-10.1,10.1,8,Severe,3,Red
+Coldwave,1993,54,1993-02-23,8,HP,-0.5,-10.5,10.5,18,Severe,10,Orange
+Heatwave,1993,82,1993-03-23,7,Punjab,43.3,3.3,3.3,11,Mild,17,Orange
+Heatwave,1993,94,1993-04-04,15,Haryana,47.2,7.2,7.2,158,Severe,9,Red
+Heatwave,1993,99,1993-04-09,5,Telangana,43.8,3.8,3.8,66,Mild,24,Orange
+Heatwave,1993,120,1993-04-30,7,Chhattisgarh,48.1,8.1,8.1,10,Severe,5,Red
+Heatwave,1993,130,1993-05-10,11,West Bengal,43.3,3.3,3.3,188,Mild,16,Orange
+Heatwave,1993,138,1993-05-18,9,Jharkhand,48.9,8.9,8.9,24,Severe,8,Yellow
+Heatwave,1993,159,1993-06-08,6,Kerala,46.0,6.0,6.0,45,Moderate,25,Red
+Coldwave,1994,-8,1994-12-23,8,Haryana,2.6,-7.4,7.4,4,Moderate,9,Red
+Coldwave,1994,2,1994-01-02,6,Punjab,-1.7,-11.7,11.7,4,Severe,18,Orange
+Coldwave,1994,16,1994-01-16,9,J&K,-1.9,-11.9,11.9,4,Severe,8,Yellow
+Coldwave,1994,26,1994-01-26,3,Haryana,2.5,-7.5,7.5,4,Moderate,15,Red
+Coldwave,1994,36,1994-02-05,8,Rajasthan,0.9,-9.1,9.1,0,Moderate,5,Yellow
+Coldwave,1994,49,1994-02-18,2,HP,7.2,-2.8,2.8,12,Mild,2,Yellow
+Coldwave,1994,50,1994-02-19,5,J&K,2.4,-7.6,7.6,2,Moderate,13,Red
+Heatwave,1994,77,1994-03-18,15,Himachal Pradesh,45.9,5.9,5.9,50,Moderate,23,Yellow
+Heatwave,1994,79,1994-03-20,11,Chhattisgarh,46.3,6.3,6.3,0,Moderate,11,Orange
+Heatwave,1994,109,1994-04-19,11,Uttarakhand,41.7,1.7,1.7,19,Mild,10,Orange
+Heatwave,1994,149,1994-05-29,13,Odisha,49.3,9.3,9.3,0,Severe,6,Yellow
+Heatwave,1994,159,1994-06-08,9,Himachal Pradesh,51.4,11.4,11.4,279,Severe,10,Orange
+Heatwave,1994,171,1994-06-20,3,Haryana,47.4,7.4,7.4,8,Severe,12,Orange
+Heatwave,1994,173,1994-06-22,6,Odisha,46.2,6.2,6.2,9,Moderate,7,Yellow
+Coldwave,1995,-18,1995-12-13,3,Rajasthan,2.7,-7.3,7.3,14,Moderate,15,Red
+Coldwave,1995,-9,1995-12-22,2,Rajasthan,-1.4,-11.4,11.4,27,Severe,20,Yellow
+Coldwave,1995,20,1995-01-20,5,HP,-0.6,-10.6,10.6,9,Severe,11,Yellow
+Coldwave,1995,37,1995-02-06,4,UP,-0.5,-10.5,10.5,12,Severe,16,Yellow
+Coldwave,1995,37,1995-02-06,3,J&K,-0.9,-10.9,10.9,36,Severe,11,Red
+Coldwave,1995,42,1995-02-11,6,J&K,6.4,-3.6,3.6,10,Mild,14,Red
+Coldwave,1995,56,1995-02-25,10,J&K,-1.2,-11.2,11.2,8,Severe,6,Yellow
+Coldwave,1995,58,1995-02-27,9,Delhi,-1.4,-11.4,11.4,9,Severe,20,Orange
+Heatwave,1995,83,1995-03-24,8,Uttarakhand,46.0,6.0,6.0,137,Moderate,16,Orange
+Heatwave,1995,88,1995-03-29,5,Himachal Pradesh,48.1,8.1,8.1,73,Severe,10,Orange
+Heatwave,1995,96,1995-04-06,9,Tamil Nadu,45.3,5.3,5.3,101,Moderate,6,Orange
+Heatwave,1995,96,1995-04-06,9,Goa,45.1,5.1,5.1,44,Moderate,24,Yellow
+Heatwave,1995,107,1995-04-17,8,Arunachal Pradesh,51.5,11.5,11.5,37,Severe,9,Red
+Heatwave,1995,120,1995-04-30,5,Goa,46.0,6.0,6.0,146,Moderate,3,Orange
+Heatwave,1995,134,1995-05-14,5,Himachal Pradesh,46.0,6.0,6.0,36,Moderate,2,Red
+Heatwave,1995,135,1995-05-15,6,Telangana,47.1,7.1,7.1,9,Severe,2,Yellow
+Heatwave,1995,140,1995-05-20,5,Goa,46.5,6.5,6.5,11,Moderate,15,Orange
+Heatwave,1995,174,1995-06-23,9,Gujarat,49.4,9.4,9.4,13,Severe,17,Red
+Coldwave,1996,-27,1996-12-03,10,Haryana,3.5,-6.5,6.5,2,Moderate,16,Yellow
+Coldwave,1996,2,1996-01-02,9,Delhi,-2.5,-12.5,12.5,12,Severe,17,Orange
+Coldwave,1996,23,1996-01-23,3,J&K,3.0,-7.0,7.0,0,Moderate,9,Yellow
+Coldwave,1996,34,1996-02-03,9,Punjab,-1.8,-11.8,11.8,4,Severe,13,Yellow
+Heatwave,1996,99,1996-04-08,6,Odisha,49.8,9.8,9.8,4,Severe,19,Orange
+Heatwave,1996,101,1996-04-10,6,Tamil Nadu,45.7,5.7,5.7,104,Moderate,11,Red
+Heatwave,1996,109,1996-04-18,15,Gujarat,47.2,7.2,7.2,40,Severe,16,Yellow
+Heatwave,1996,111,1996-04-20,9,Madhya Pradesh,47.0,7.0,7.0,81,Moderate,4,Red
+Heatwave,1996,134,1996-05-13,3,Delhi,45.3,5.3,5.3,3,Moderate,5,Orange
+Heatwave,1996,136,1996-05-15,12,Uttar Pradesh,48.0,8.0,8.0,37,Severe,13,Red
+Heatwave,1996,138,1996-05-17,10,Jharkhand,49.5,9.5,9.5,8,Severe,21,Orange
+Heatwave,1996,162,1996-06-10,11,Kerala,49.6,9.6,9.6,34,Severe,17,Yellow
+Heatwave,1996,168,1996-06-16,4,Manipur,46.8,6.8,6.8,4,Moderate,22,Orange
+Coldwave,1997,5,1997-01-05,9,Rajasthan,1.8,-8.2,8.2,8,Moderate,14,Red
+Heatwave,1997,83,1997-03-24,11,Kerala,47.4,7.4,7.4,86,Severe,5,Red
+Heatwave,1997,89,1997-03-30,10,Manipur,47.9,7.9,7.9,94,Severe,15,Red
+Heatwave,1997,96,1997-04-06,5,Uttarakhand,47.5,7.5,7.5,55,Severe,20,Red
+Heatwave,1997,98,1997-04-08,12,Himachal Pradesh,44.2,4.2,4.2,25,Moderate,25,Orange
+Heatwave,1997,99,1997-04-09,7,Jharkhand,47.3,7.3,7.3,6,Severe,22,Orange
+Heatwave,1997,100,1997-04-10,9,Goa,42.3,2.3,2.3,70,Mild,20,Orange
+Heatwave,1997,112,1997-04-22,12,Bihar,48.0,8.0,8.0,196,Severe,17,Yellow
+Heatwave,1997,124,1997-05-04,5,Tripura,43.7,3.7,3.7,41,Mild,20,Red
+Heatwave,1997,127,1997-05-07,8,Kerala,45.7,5.7,5.7,33,Moderate,22,Yellow
+Heatwave,1997,131,1997-05-11,11,Jharkhand,46.0,6.0,6.0,40,Moderate,2,Yellow
+Heatwave,1997,170,1997-06-19,8,Gujarat,42.0,2.0,2.0,98,Mild,15,Red
+Heatwave,1997,172,1997-06-21,11,Maharashtra,46.1,6.1,6.1,14,Moderate,13,Red
+Coldwave,1998,-29,1998-12-02,6,Haryana,3.9,-6.1,6.1,11,Moderate,18,Yellow
+Coldwave,1998,-14,1998-12-17,2,Delhi,-1.3,-11.3,11.3,9,Severe,7,Orange
+Coldwave,1998,4,1998-01-04,3,MP,5.7,-4.3,4.3,4,Mild,16,Yellow
+Coldwave,1998,19,1998-01-19,5,HP,0.7,-9.3,9.3,10,Moderate,8,Orange
+Coldwave,1998,29,1998-01-29,9,Uttarakhand,0.1,-9.9,9.9,0,Moderate,16,Red
+Heatwave,1998,77,1998-03-18,13,Assam,41.6,1.6,1.6,69,Mild,21,Yellow
+Heatwave,1998,88,1998-03-29,9,Uttarakhand,51.5,11.5,11.5,38,Severe,6,Orange
+Heatwave,1998,99,1998-04-09,12,Odisha,47.2,7.2,7.2,132,Severe,3,Yellow
+Heatwave,1998,99,1998-04-09,7,Gujarat,47.8,7.8,7.8,62,Severe,21,Orange
+Heatwave,1998,105,1998-04-15,7,Punjab,45.7,5.7,5.7,36,Moderate,12,Red
+Heatwave,1998,127,1998-05-07,4,Assam,45.6,5.6,5.6,38,Moderate,22,Orange
+Heatwave,1998,133,1998-05-13,9,Tripura,44.1,4.1,4.1,38,Moderate,23,Orange
+Heatwave,1998,136,1998-05-16,4,Delhi,48.6,8.6,8.6,47,Severe,3,Yellow
+Heatwave,1998,137,1998-05-17,10,Maharashtra,48.5,8.5,8.5,57,Severe,17,Orange
+Heatwave,1998,141,1998-05-21,4,Maharashtra,46.3,6.3,6.3,2,Moderate,10,Red
+Heatwave,1998,146,1998-05-26,6,Delhi,46.2,6.2,6.2,26,Moderate,21,Orange
+Heatwave,1998,150,1998-05-30,6,Rajasthan,44.7,4.7,4.7,10,Moderate,6,Orange
+Heatwave,1998,152,1998-06-01,3,Uttarakhand,45.0,5.0,5.0,43,Moderate,10,Orange
+Heatwave,1998,174,1998-06-23,3,Haryana,48.0,8.0,8.0,9,Severe,25,Red
+Heatwave,1998,175,1998-06-24,5,Uttar Pradesh,45.3,5.3,5.3,18,Moderate,8,Yellow
+Coldwave,1999,-25,1999-12-06,3,Haryana,6.5,-3.5,3.5,3,Mild,19,Red
+Coldwave,1999,-2,1999-12-29,5,MP,2.8,-7.2,7.2,6,Moderate,5,Red
+Coldwave,1999,8,1999-01-08,9,MP,0.0,-10.0,10.0,0,Moderate,16,Yellow
+Coldwave,1999,19,1999-01-19,10,J&K,2.6,-7.4,7.4,2,Moderate,20,Yellow
+Coldwave,1999,29,1999-01-29,7,Delhi,3.5,-6.5,6.5,1,Moderate,10,Red
+Coldwave,1999,36,1999-02-05,7,Uttarakhand,-0.2,-10.2,10.2,0,Severe,14,Orange
+Coldwave,1999,40,1999-02-09,2,UP,3.2,-6.8,6.8,2,Moderate,18,Red
+Coldwave,1999,45,1999-02-14,6,Bihar,1.1,-8.9,8.9,9,Moderate,20,Orange
+Heatwave,1999,78,1999-03-19,15,Rajasthan,47.0,7.0,7.0,39,Moderate,21,Orange
+Heatwave,1999,78,1999-03-19,11,Andhra Pradesh,47.6,7.6,7.6,14,Severe,2,Orange
+Heatwave,1999,97,1999-04-07,12,West Bengal,50.2,10.2,10.2,101,Severe,8,Yellow
+Heatwave,1999,98,1999-04-08,8,Maharashtra,48.5,8.5,8.5,18,Severe,19,Orange
+Heatwave,1999,105,1999-04-15,14,Tamil Nadu,47.4,7.4,7.4,7,Severe,13,Yellow
+Heatwave,1999,110,1999-04-20,4,Telangana,45.0,5.0,5.0,17,Moderate,21,Yellow
+Heatwave,1999,116,1999-04-26,7,Assam,44.4,4.4,4.4,14,Moderate,19,Yellow
+Heatwave,1999,120,1999-04-30,4,Tripura,43.6,3.6,3.6,3,Mild,14,Red
+Heatwave,1999,134,1999-05-14,9,Uttar Pradesh,45.8,5.8,5.8,16,Moderate,16,Yellow
+Heatwave,1999,165,1999-06-14,13,Karnataka,49.7,9.7,9.7,121,Severe,24,Red
+Heatwave,1999,173,1999-06-22,6,Uttarakhand,48.0,8.0,8.0,53,Severe,3,Orange
+Coldwave,2000,-30,2000-11-30,6,Punjab,-1.6,-11.6,11.6,0,Severe,13,Red
+Coldwave,2000,-24,2000-12-06,2,Punjab,2.9,-7.1,7.1,28,Moderate,20,Orange
+Coldwave,2000,-1,2000-12-29,4,Bihar,-1.3,-11.3,11.3,15,Severe,12,Yellow
+Coldwave,2000,4,2000-01-04,4,HP,0.1,-9.9,9.9,1,Moderate,14,Yellow
+Coldwave,2000,8,2000-01-08,8,HP,4.2,-5.8,5.8,38,Mild,10,Red
+Coldwave,2000,21,2000-01-21,6,J&K,3.4,-6.6,6.6,1,Moderate,3,Yellow
+Coldwave,2000,27,2000-01-27,5,J&K,-1.6,-11.6,11.6,0,Severe,15,Red
+Coldwave,2000,34,2000-02-03,5,HP,4.5,-5.5,5.5,5,Mild,5,Yellow
+Heatwave,2000,77,2000-03-17,14,Punjab,45.8,5.8,5.8,48,Moderate,25,Orange
+Heatwave,2000,102,2000-04-11,7,Assam,45.3,5.3,5.3,51,Moderate,9,Yellow
+Heatwave,2000,105,2000-04-14,9,Jharkhand,50.9,10.9,10.9,14,Severe,2,Orange
+Heatwave,2000,109,2000-04-18,12,Jharkhand,49.8,9.8,9.8,22,Severe,13,Orange
+Heatwave,2000,110,2000-04-19,11,Bihar,45.0,5.0,5.0,43,Moderate,23,Red
+Heatwave,2000,113,2000-04-22,13,Tamil Nadu,50.9,10.9,10.9,75,Severe,10,Yellow
+Heatwave,2000,126,2000-05-05,5,Jharkhand,46.1,6.1,6.1,12,Moderate,21,Orange
+Heatwave,2000,137,2000-05-16,14,Nagaland,45.0,5.0,5.0,34,Moderate,5,Yellow
+Heatwave,2000,139,2000-05-18,14,Odisha,48.4,8.4,8.4,54,Severe,24,Yellow
+Heatwave,2000,151,2000-05-30,4,Punjab,42.6,2.6,2.6,172,Mild,22,Orange
+Heatwave,2000,153,2000-06-01,11,Arunachal Pradesh,43.6,3.6,3.6,26,Mild,20,Red
+Heatwave,2000,158,2000-06-06,9,Maharashtra,46.3,6.3,6.3,12,Moderate,24,Yellow
+Heatwave,2000,164,2000-06-12,10,Nagaland,41.2,1.2,1.2,85,Mild,25,Orange
+Coldwave,2001,-1,2001-12-30,10,Haryana,-1.4,-11.4,11.4,9,Severe,14,Red
+Coldwave,2001,0,2000-12-31,10,Delhi,0.6,-9.4,9.4,6,Moderate,10,Orange
+Coldwave,2001,14,2001-01-14,8,Bihar,2.8,-7.2,7.2,0,Moderate,6,Red
+Heatwave,2001,93,2001-04-03,7,Haryana,46.0,6.0,6.0,0,Moderate,3,Orange
+Heatwave,2001,141,2001-05-21,8,Punjab,44.7,4.7,4.7,17,Moderate,10,Orange
+Heatwave,2001,175,2001-06-24,7,Punjab,45.8,5.8,5.8,34,Moderate,10,Red
+Coldwave,2002,-27,2002-12-04,5,HP,6.4,-3.6,3.6,7,Mild,7,Red
+Coldwave,2002,-5,2002-12-26,10,Bihar,-2.3,-12.3,12.3,1,Severe,16,Yellow
+Coldwave,2002,11,2002-01-11,5,J&K,5.8,-4.2,4.2,3,Mild,8,Yellow
+Coldwave,2002,13,2002-01-13,2,UP,4.9,-5.1,5.1,3,Mild,7,Red
+Coldwave,2002,24,2002-01-24,10,Punjab,-0.5,-10.5,10.5,5,Severe,18,Red
+Coldwave,2002,52,2002-02-21,8,Uttarakhand,-1.3,-11.3,11.3,4,Severe,18,Orange
+Coldwave,2002,55,2002-02-24,9,UP,0.8,-9.2,9.2,4,Moderate,7,Red
+Heatwave,2002,76,2002-03-17,5,Karnataka,43.2,3.2,3.2,46,Mild,10,Red
+Heatwave,2002,82,2002-03-23,9,Manipur,47.1,7.1,7.1,38,Severe,19,Red
+Heatwave,2002,90,2002-03-31,4,Arunachal Pradesh,47.7,7.7,7.7,22,Severe,5,Red
+Heatwave,2002,94,2002-04-04,5,Goa,43.0,3.0,3.0,51,Mild,25,Orange
+Heatwave,2002,94,2002-04-04,4,Arunachal Pradesh,44.9,4.9,4.9,68,Moderate,8,Orange
+Heatwave,2002,98,2002-04-08,11,Goa,47.1,7.1,7.1,42,Severe,22,Red
+Heatwave,2002,103,2002-04-13,15,Chhattisgarh,47.5,7.5,7.5,122,Severe,25,Red
+Heatwave,2002,121,2002-05-01,13,Maharashtra,47.9,7.9,7.9,49,Severe,4,Orange
+Heatwave,2002,149,2002-05-29,3,Arunachal Pradesh,49.0,9.0,9.0,67,Severe,22,Orange
+Heatwave,2002,151,2002-05-31,8,Tamil Nadu,44.8,4.8,4.8,107,Moderate,16,Yellow
+Heatwave,2002,161,2002-06-10,14,Nagaland,43.4,3.4,3.4,62,Mild,16,Red
+Coldwave,2003,-19,2003-12-12,9,HP,-2.0,-12.0,12.0,11,Severe,17,Red
+Coldwave,2003,-14,2003-12-17,10,Delhi,-1.1,-11.1,11.1,25,Severe,7,Yellow
+Coldwave,2003,-10,2003-12-21,8,UP,-0.1,-10.1,10.1,3,Severe,7,Orange
+Coldwave,2003,6,2003-01-06,6,J&K,7.9,-2.1,2.1,10,Mild,13,Orange
+Coldwave,2003,12,2003-01-12,4,UP,6.0,-4.0,4.0,4,Mild,13,Red
+Coldwave,2003,19,2003-01-19,6,Uttarakhand,-0.1,-10.1,10.1,21,Severe,2,Orange
+Heatwave,2003,88,2003-03-29,13,Kerala,47.3,7.3,7.3,50,Severe,8,Red
+Heatwave,2003,92,2003-04-02,12,Manipur,46.7,6.7,6.7,4,Moderate,15,Yellow
+Heatwave,2003,93,2003-04-03,5,Uttarakhand,49.2,9.2,9.2,63,Severe,19,Red
+Heatwave,2003,104,2003-04-14,7,Odisha,48.8,8.8,8.8,33,Severe,6,Yellow
+Heatwave,2003,119,2003-04-29,14,Assam,50.2,10.2,10.2,45,Severe,8,Yellow
+Heatwave,2003,119,2003-04-29,13,Delhi,47.4,7.4,7.4,91,Severe,8,Yellow
+Heatwave,2003,120,2003-04-30,8,Telangana,47.1,7.1,7.1,8,Severe,18,Orange
+Heatwave,2003,122,2003-05-02,7,Haryana,49.3,9.3,9.3,40,Severe,19,Orange
+Heatwave,2003,125,2003-05-05,9,Haryana,43.3,3.3,3.3,51,Mild,2,Orange
+Heatwave,2003,134,2003-05-14,14,Maharashtra,42.4,2.4,2.4,88,Mild,22,Orange
+Heatwave,2003,143,2003-05-23,5,Bihar,48.1,8.1,8.1,61,Severe,25,Red
+Coldwave,2004,-30,2004-11-30,8,MP,1.9,-8.1,8.1,7,Moderate,4,Yellow
+Coldwave,2004,-28,2004-12-02,5,Delhi,4.5,-5.5,5.5,5,Mild,15,Orange
+Coldwave,2004,-26,2004-12-04,10,UP,9.5,-0.5,0.5,2,Mild,11,Red
+Coldwave,2004,-15,2004-12-15,9,HP,2.5,-7.5,7.5,8,Moderate,3,Orange
+Coldwave,2004,12,2004-01-12,2,UP,7.3,-2.7,2.7,7,Mild,19,Orange
+Coldwave,2004,41,2004-02-10,5,MP,1.4,-8.6,8.6,3,Moderate,17,Red
+Heatwave,2004,76,2004-03-16,14,Assam,51.6,11.6,11.6,22,Severe,6,Red
+Heatwave,2004,84,2004-03-24,7,Goa,45.8,5.8,5.8,91,Moderate,2,Yellow
+Heatwave,2004,96,2004-04-05,10,Maharashtra,51.5,11.5,11.5,6,Severe,12,Orange
+Heatwave,2004,97,2004-04-06,8,Goa,49.4,9.4,9.4,41,Severe,20,Yellow
+Heatwave,2004,106,2004-04-15,5,Maharashtra,46.4,6.4,6.4,67,Moderate,14,Yellow
+Heatwave,2004,114,2004-04-23,4,Bihar,47.1,7.1,7.1,100,Severe,2,Yellow
+Heatwave,2004,127,2004-05-06,11,Jharkhand,45.2,5.2,5.2,65,Moderate,9,Red
+Heatwave,2004,144,2004-05-23,11,Madhya Pradesh,45.3,5.3,5.3,121,Moderate,12,Red
+Heatwave,2004,148,2004-05-27,6,Karnataka,47.6,7.6,7.6,16,Severe,9,Red
+Heatwave,2004,165,2004-06-13,13,Gujarat,42.1,2.1,2.1,47,Mild,12,Orange
+Heatwave,2004,166,2004-06-14,13,Manipur,42.6,2.6,2.6,18,Mild,18,Red
+Heatwave,2004,167,2004-06-15,10,Uttar Pradesh,43.0,3.0,3.0,148,Mild,5,Red
+Heatwave,2004,171,2004-06-19,14,Andhra Pradesh,45.8,5.8,5.8,154,Moderate,24,Orange
+Coldwave,2005,-22,2005-12-09,6,J&K,3.4,-6.6,6.6,5,Moderate,20,Yellow
+Coldwave,2005,-20,2005-12-11,2,MP,1.4,-8.6,8.6,14,Moderate,2,Yellow
+Coldwave,2005,-10,2005-12-21,8,Bihar,0.6,-9.4,9.4,15,Moderate,9,Red
+Coldwave,2005,53,2005-02-22,9,Rajasthan,6.7,-3.3,3.3,20,Mild,6,Red
+Coldwave,2005,57,2005-02-26,5,UP,5.1,-4.9,4.9,10,Mild,5,Orange
+Heatwave,2005,82,2005-03-23,12,Maharashtra,47.6,7.6,7.6,16,Severe,7,Orange
+Heatwave,2005,96,2005-04-06,10,Rajasthan,47.5,7.5,7.5,38,Severe,22,Orange
+Heatwave,2005,118,2005-04-28,13,Odisha,46.0,6.0,6.0,8,Moderate,20,Red
+Heatwave,2005,124,2005-05-04,3,Gujarat,47.5,7.5,7.5,169,Severe,24,Orange
+Heatwave,2005,133,2005-05-13,8,Tripura,43.5,3.5,3.5,3,Mild,19,Orange
+Heatwave,2005,139,2005-05-19,10,Goa,47.4,7.4,7.4,75,Severe,19,Red
+Heatwave,2005,151,2005-05-31,4,Madhya Pradesh,46.1,6.1,6.1,82,Moderate,3,Red
+Heatwave,2005,157,2005-06-06,3,Punjab,44.4,4.4,4.4,29,Moderate,16,Yellow
+Coldwave,2006,-29,2006-12-02,9,Uttarakhand,6.3,-3.7,3.7,7,Mild,10,Yellow
+Coldwave,2006,-18,2006-12-13,8,J&K,4.7,-5.3,5.3,5,Mild,19,Red
+Coldwave,2006,-3,2006-12-28,6,Punjab,2.6,-7.4,7.4,24,Moderate,17,Red
+Coldwave,2006,13,2006-01-13,10,Delhi,2.2,-7.8,7.8,40,Moderate,5,Orange
+Coldwave,2006,14,2006-01-14,7,UP,5.5,-4.5,4.5,8,Mild,7,Red
+Heatwave,2006,108,2006-04-18,8,Uttarakhand,42.1,2.1,2.1,16,Mild,18,Orange
+Heatwave,2006,111,2006-04-21,12,Karnataka,47.3,7.3,7.3,27,Severe,15,Orange
+Heatwave,2006,158,2006-06-07,15,Chhattisgarh,42.4,2.4,2.4,110,Mild,17,Red
+Heatwave,2006,171,2006-06-20,7,Himachal Pradesh,45.1,5.1,5.1,35,Moderate,18,Yellow
+Coldwave,2007,-22,2007-12-09,8,Rajasthan,-2.5,-12.5,12.5,5,Severe,12,Orange
+Coldwave,2007,1,2007-01-01,5,Bihar,1.2,-8.8,8.8,6,Moderate,18,Red
+Coldwave,2007,13,2007-01-13,5,MP,1.4,-8.6,8.6,22,Moderate,19,Yellow
+Coldwave,2007,22,2007-01-22,3,Haryana,5.8,-4.2,4.2,8,Mild,20,Yellow
+Coldwave,2007,30,2007-01-30,3,Uttarakhand,3.8,-6.2,6.2,4,Moderate,15,Orange
+Coldwave,2007,42,2007-02-11,6,MP,1.0,-9.0,9.0,7,Moderate,13,Red
+Heatwave,2007,78,2007-03-19,8,Odisha,46.4,6.4,6.4,65,Moderate,20,Yellow
+Heatwave,2007,82,2007-03-23,3,Punjab,45.1,5.1,5.1,123,Moderate,23,Yellow
+Heatwave,2007,90,2007-03-31,7,Rajasthan,45.4,5.4,5.4,39,Moderate,7,Yellow
+Heatwave,2007,96,2007-04-06,9,Gujarat,45.9,5.9,5.9,70,Moderate,23,Yellow
+Heatwave,2007,99,2007-04-09,10,Andhra Pradesh,45.7,5.7,5.7,69,Moderate,13,Red
+Heatwave,2007,106,2007-04-16,5,Punjab,44.7,4.7,4.7,49,Moderate,22,Orange
+Heatwave,2007,119,2007-04-29,6,Andhra Pradesh,46.2,6.2,6.2,26,Moderate,4,Orange
+Heatwave,2007,124,2007-05-04,14,Rajasthan,52.0,12.0,12.0,103,Severe,24,Yellow
+Heatwave,2007,127,2007-05-07,8,Jharkhand,44.2,4.2,4.2,24,Moderate,2,Yellow
+Heatwave,2007,127,2007-05-07,13,Uttarakhand,42.0,2.0,2.0,61,Mild,23,Orange
+Heatwave,2007,133,2007-05-13,3,Madhya Pradesh,44.6,4.6,4.6,104,Moderate,17,Orange
+Heatwave,2007,136,2007-05-16,12,Telangana,45.9,5.9,5.9,18,Moderate,9,Red
+Heatwave,2007,166,2007-06-15,12,Karnataka,50.4,10.4,10.4,4,Severe,2,Yellow
+Heatwave,2007,171,2007-06-20,4,Uttar Pradesh,45.0,5.0,5.0,4,Moderate,13,Orange
+Coldwave,2008,-24,2008-12-06,5,Bihar,-0.0,-10.0,10.0,19,Moderate,5,Orange
+Coldwave,2008,-1,2008-12-29,10,Rajasthan,4.6,-5.4,5.4,16,Mild,7,Red
+Coldwave,2008,12,2008-01-12,6,Haryana,-2.0,-12.0,12.0,6,Severe,10,Yellow
+Coldwave,2008,23,2008-01-23,3,MP,0.6,-9.4,9.4,3,Moderate,10,Yellow
+Coldwave,2008,44,2008-02-13,2,UP,2.3,-7.7,7.7,8,Moderate,7,Yellow
+Heatwave,2008,82,2008-03-22,5,Rajasthan,45.9,5.9,5.9,77,Moderate,18,Orange
+Heatwave,2008,88,2008-03-28,10,Rajasthan,45.5,5.5,5.5,31,Moderate,16,Red
+Heatwave,2008,93,2008-04-02,8,Delhi,41.3,1.3,1.3,106,Mild,22,Red
+Heatwave,2008,104,2008-04-13,11,Jharkhand,45.1,5.1,5.1,14,Moderate,13,Orange
+Heatwave,2008,105,2008-04-14,5,Himachal Pradesh,44.0,4.0,4.0,14,Mild,8,Yellow
+Heatwave,2008,119,2008-04-28,10,Arunachal Pradesh,45.1,5.1,5.1,10,Moderate,6,Red
+Heatwave,2008,121,2008-04-30,9,West Bengal,46.7,6.7,6.7,3,Moderate,8,Orange
+Heatwave,2008,135,2008-05-14,8,Kerala,42.1,2.1,2.1,94,Mild,22,Orange
+Heatwave,2008,137,2008-05-16,6,Uttarakhand,46.0,6.0,6.0,29,Moderate,13,Yellow
+Heatwave,2008,149,2008-05-28,5,Assam,44.7,4.7,4.7,60,Moderate,10,Red
+Heatwave,2008,156,2008-06-04,8,Kerala,45.4,5.4,5.4,0,Moderate,9,Red
+Heatwave,2008,157,2008-06-05,9,Arunachal Pradesh,49.2,9.2,9.2,0,Severe,23,Orange
+Heatwave,2008,161,2008-06-09,8,Bihar,43.6,3.6,3.6,60,Mild,9,Orange
+Coldwave,2009,-19,2009-12-12,8,UP,6.0,-4.0,4.0,3,Mild,4,Yellow
+Coldwave,2009,27,2009-01-27,4,Delhi,6.0,-4.0,4.0,24,Mild,15,Orange
+Coldwave,2009,44,2009-02-13,10,J&K,3.4,-6.6,6.6,3,Moderate,20,Red
+Coldwave,2009,47,2009-02-16,2,Delhi,1.7,-8.3,8.3,2,Moderate,15,Red
+Coldwave,2009,52,2009-02-21,3,Punjab,3.0,-7.0,7.0,9,Moderate,12,Orange
+Heatwave,2009,119,2009-04-29,7,Kerala,43.8,3.8,3.8,240,Mild,14,Red
+Heatwave,2009,127,2009-05-07,8,West Bengal,45.8,5.8,5.8,35,Moderate,11,Red
+Heatwave,2009,132,2009-05-12,14,West Bengal,49.2,9.2,9.2,41,Severe,8,Yellow
+Heatwave,2009,148,2009-05-28,6,Manipur,44.2,4.2,4.2,20,Moderate,4,Orange
+Coldwave,2010,-26,2010-12-05,3,J&K,2.7,-7.3,7.3,5,Moderate,15,Orange
+Coldwave,2010,1,2010-01-01,9,Haryana,1.7,-8.3,8.3,3,Moderate,20,Yellow
+Coldwave,2010,1,2010-01-01,6,Punjab,3.6,-6.4,6.4,1,Moderate,13,Red
+Coldwave,2010,6,2010-01-06,10,Punjab,0.3,-9.7,9.7,6,Moderate,20,Red
+Coldwave,2010,13,2010-01-13,5,Bihar,0.3,-9.7,9.7,4,Moderate,15,Yellow
+Coldwave,2010,37,2010-02-06,10,Haryana,-1.4,-11.4,11.4,14,Severe,20,Orange
+Heatwave,2010,92,2010-04-02,12,Kerala,48.1,8.1,8.1,81,Severe,13,Red
+Heatwave,2010,105,2010-04-15,4,Rajasthan,46.9,6.9,6.9,10,Moderate,11,Red
+Heatwave,2010,107,2010-04-17,7,Uttarakhand,43.7,3.7,3.7,99,Mild,9,Red
+Heatwave,2010,114,2010-04-24,12,Bihar,50.5,10.5,10.5,38,Severe,24,Yellow
+Heatwave,2010,115,2010-04-25,5,Tripura,44.1,4.1,4.1,56,Moderate,14,Orange
+Heatwave,2010,122,2010-05-02,12,Odisha,47.3,7.3,7.3,8,Severe,24,Red
+Heatwave,2010,126,2010-05-06,7,Arunachal Pradesh,46.3,6.3,6.3,111,Moderate,3,Orange
+Heatwave,2010,131,2010-05-11,4,Tamil Nadu,49.6,9.6,9.6,19,Severe,25,Yellow
+Heatwave,2010,140,2010-05-20,12,Telangana,42.2,2.2,2.2,89,Mild,4,Orange
+Heatwave,2010,146,2010-05-26,7,Maharashtra,49.1,9.1,9.1,62,Severe,14,Yellow
+Heatwave,2010,157,2010-06-06,4,Telangana,44.0,4.0,4.0,51,Mild,15,Orange
+Heatwave,2010,160,2010-06-09,5,Punjab,47.0,7.0,7.0,2,Moderate,23,Orange
+Heatwave,2010,175,2010-06-24,7,Jharkhand,46.2,6.2,6.2,18,Moderate,20,Red
+Coldwave,2011,-16,2011-12-15,4,Delhi,2.7,-7.3,7.3,19,Moderate,3,Yellow
+Coldwave,2011,-2,2011-12-29,2,Punjab,-1.8,-11.8,11.8,9,Severe,4,Yellow
+Coldwave,2011,5,2011-01-05,6,Delhi,1.4,-8.6,8.6,1,Moderate,3,Yellow
+Coldwave,2011,8,2011-01-08,4,UP,-1.6,-11.6,11.6,1,Severe,16,Yellow
+Coldwave,2011,15,2011-01-15,7,Bihar,4.6,-5.4,5.4,9,Mild,5,Yellow
+Heatwave,2011,75,2011-03-16,10,Madhya Pradesh,45.4,5.4,5.4,321,Moderate,4,Red
+Heatwave,2011,77,2011-03-18,11,Jharkhand,44.9,4.9,4.9,4,Moderate,22,Red
+Heatwave,2011,107,2011-04-17,8,Goa,43.5,3.5,3.5,32,Mild,18,Yellow
+Heatwave,2011,109,2011-04-19,7,Punjab,40.7,0.7,0.7,8,Mild,23,Red
+Heatwave,2011,117,2011-04-27,8,West Bengal,44.8,4.8,4.8,4,Moderate,3,Yellow
+Heatwave,2011,126,2011-05-06,6,Tamil Nadu,45.7,5.7,5.7,0,Moderate,17,Yellow
+Heatwave,2011,136,2011-05-16,10,Haryana,46.3,6.3,6.3,72,Moderate,22,Orange
+Heatwave,2011,141,2011-05-21,8,Himachal Pradesh,44.0,4.0,4.0,3,Mild,13,Red
+Heatwave,2011,169,2011-06-18,15,Himachal Pradesh,45.8,5.8,5.8,64,Moderate,15,Orange
+Heatwave,2011,174,2011-06-23,4,Jharkhand,46.7,6.7,6.7,19,Moderate,3,Red
+Coldwave,2012,-14,2012-12-16,3,UP,3.1,-6.9,6.9,4,Moderate,18,Yellow
+Coldwave,2012,8,2012-01-08,8,Delhi,-1.6,-11.6,11.6,20,Severe,14,Yellow
+Coldwave,2012,21,2012-01-21,9,J&K,0.9,-9.1,9.1,4,Moderate,2,Yellow
+Heatwave,2012,87,2012-03-27,13,Odisha,43.6,3.6,3.6,256,Mild,17,Yellow
+Heatwave,2012,116,2012-04-25,12,Tamil Nadu,48.4,8.4,8.4,23,Severe,10,Red
+Heatwave,2012,127,2012-05-06,4,Nagaland,44.5,4.5,4.5,14,Moderate,13,Yellow
+Heatwave,2012,128,2012-05-07,14,Kerala,47.4,7.4,7.4,12,Severe,19,Yellow
+Heatwave,2012,145,2012-05-24,4,Arunachal Pradesh,48.5,8.5,8.5,5,Severe,4,Red
+Heatwave,2012,153,2012-06-01,10,Telangana,45.6,5.6,5.6,14,Moderate,20,Red
+Heatwave,2012,162,2012-06-10,6,Jharkhand,48.3,8.3,8.3,3,Severe,8,Yellow
+Heatwave,2012,174,2012-06-22,13,Punjab,46.1,6.1,6.1,48,Moderate,3,Red
+Coldwave,2013,-28,2013-12-03,8,Haryana,1.3,-8.7,8.7,10,Moderate,10,Orange
+Coldwave,2013,-25,2013-12-06,7,J&K,4.0,-6.0,6.0,5,Mild,5,Yellow
+Coldwave,2013,6,2013-01-06,4,MP,1.6,-8.4,8.4,5,Moderate,6,Red
+Coldwave,2013,12,2013-01-12,3,Uttarakhand,7.1,-2.9,2.9,5,Mild,2,Orange
+Coldwave,2013,26,2013-01-26,5,MP,6.8,-3.2,3.2,30,Mild,12,Orange
+Coldwave,2013,28,2013-01-28,3,UP,2.5,-7.5,7.5,10,Moderate,18,Red
+Coldwave,2013,28,2013-01-28,10,Haryana,3.8,-6.2,6.2,21,Moderate,10,Yellow
+Heatwave,2013,79,2013-03-20,9,Madhya Pradesh,45.5,5.5,5.5,48,Moderate,15,Orange
+Heatwave,2013,93,2013-04-03,3,Himachal Pradesh,43.4,3.4,3.4,54,Mild,9,Red
+Heatwave,2013,98,2013-04-08,5,Goa,43.2,3.2,3.2,28,Mild,17,Yellow
+Heatwave,2013,107,2013-04-17,5,Assam,46.2,6.2,6.2,51,Moderate,17,Red
+Heatwave,2013,108,2013-04-18,15,Bihar,47.9,7.9,7.9,34,Severe,3,Yellow
+Heatwave,2013,117,2013-04-27,13,Uttarakhand,50.0,10.0,10.0,3,Severe,18,Red
+Heatwave,2013,124,2013-05-04,4,Assam,42.0,2.0,2.0,50,Mild,23,Orange
+Heatwave,2013,125,2013-05-05,13,Uttarakhand,45.0,5.0,5.0,2,Moderate,10,Yellow
+Heatwave,2013,127,2013-05-07,9,Kerala,46.3,6.3,6.3,22,Moderate,3,Orange
+Heatwave,2013,139,2013-05-19,9,Haryana,46.0,6.0,6.0,23,Moderate,13,Yellow
+Heatwave,2013,140,2013-05-20,7,Delhi,48.9,8.9,8.9,174,Severe,11,Yellow
+Heatwave,2013,154,2013-06-03,5,Delhi,44.5,4.5,4.5,23,Moderate,8,Orange
+Heatwave,2013,158,2013-06-07,9,Chhattisgarh,41.2,1.2,1.2,8,Mild,4,Yellow
+Heatwave,2013,161,2013-06-10,3,Tripura,42.3,2.3,2.3,125,Mild,12,Red
+Coldwave,2014,-18,2014-12-13,4,Haryana,2.2,-7.8,7.8,5,Moderate,4,Red
+Coldwave,2014,-18,2014-12-13,2,Bihar,4.6,-5.4,5.4,10,Mild,2,Yellow
+Coldwave,2014,-7,2014-12-24,8,Uttarakhand,0.6,-9.4,9.4,1,Moderate,20,Orange
+Coldwave,2014,0,2013-12-31,9,Haryana,4.8,-5.2,5.2,6,Mild,14,Yellow
+Coldwave,2014,15,2014-01-15,9,Delhi,0.6,-9.4,9.4,1,Moderate,13,Red
+Coldwave,2014,17,2014-01-17,10,MP,-1.7,-11.7,11.7,3,Severe,2,Red
+Coldwave,2014,21,2014-01-21,6,Haryana,6.6,-3.4,3.4,13,Mild,13,Yellow
+Heatwave,2014,98,2014-04-08,8,Assam,49.1,9.1,9.1,81,Severe,12,Red
+Heatwave,2014,102,2014-04-12,3,Haryana,44.6,4.6,4.6,15,Moderate,11,Yellow
+Heatwave,2014,102,2014-04-12,6,Goa,48.7,8.7,8.7,22,Severe,15,Orange
+Heatwave,2014,113,2014-04-23,12,Tripura,44.9,4.9,4.9,2,Moderate,21,Yellow
+Heatwave,2014,117,2014-04-27,10,Arunachal Pradesh,45.9,5.9,5.9,93,Moderate,8,Orange
+Heatwave,2014,136,2014-05-16,14,Maharashtra,49.9,9.9,9.9,201,Severe,16,Orange
+Heatwave,2014,161,2014-06-10,3,Odisha,46.0,6.0,6.0,59,Moderate,15,Red
+Heatwave,2014,162,2014-06-11,8,Chhattisgarh,46.4,6.4,6.4,9,Moderate,10,Yellow
+Heatwave,2014,170,2014-06-19,8,Manipur,46.5,6.5,6.5,14,Moderate,6,Red
+Coldwave,2015,-21,2015-12-10,7,J&K,-0.3,-10.3,10.3,15,Severe,3,Yellow
+Coldwave,2015,-17,2015-12-14,3,Haryana,2.1,-7.9,7.9,5,Moderate,7,Yellow
+Coldwave,2015,28,2015-01-28,2,Delhi,1.4,-8.6,8.6,10,Moderate,17,Red
+Coldwave,2015,47,2015-02-16,2,Haryana,1.8,-8.2,8.2,5,Moderate,19,Orange
+Heatwave,2015,76,2015-03-17,11,Tamil Nadu,45.0,5.0,5.0,44,Moderate,16,Orange
+Heatwave,2015,151,2015-05-31,4,Odisha,42.5,2.5,2.5,158,Mild,16,Orange
+Heatwave,2015,161,2015-06-10,8,Manipur,46.4,6.4,6.4,60,Moderate,22,Red
+Coldwave,2016,-30,2016-11-30,10,Bihar,0.7,-9.3,9.3,19,Moderate,10,Yellow
+Coldwave,2016,-26,2016-12-04,10,MP,1.6,-8.4,8.4,6,Moderate,19,Orange
+Coldwave,2016,25,2016-01-25,5,Uttarakhand,3.7,-6.3,6.3,4,Moderate,18,Orange
+Coldwave,2016,37,2016-02-06,6,Rajasthan,-0.4,-10.4,10.4,27,Severe,8,Orange
+Coldwave,2016,38,2016-02-07,3,UP,5.4,-4.6,4.6,15,Mild,7,Yellow
+Heatwave,2016,81,2016-03-21,6,West Bengal,43.7,3.7,3.7,80,Mild,8,Yellow
+Heatwave,2016,102,2016-04-11,14,Telangana,43.4,3.4,3.4,48,Mild,14,Red
+Heatwave,2016,159,2016-06-07,7,Himachal Pradesh,49.1,9.1,9.1,6,Severe,18,Orange
+Coldwave,2017,12,2017-01-12,5,HP,-0.4,-10.4,10.4,9,Severe,5,Yellow
+Coldwave,2017,40,2017-02-09,5,Rajasthan,-0.9,-10.9,10.9,1,Severe,20,Yellow
+Coldwave,2017,47,2017-02-16,10,Delhi,-2.4,-12.4,12.4,1,Severe,12,Orange
+Heatwave,2017,89,2017-03-30,14,Andhra Pradesh,46.1,6.1,6.1,16,Moderate,4,Orange
+Heatwave,2017,94,2017-04-04,6,Telangana,48.8,8.8,8.8,16,Severe,9,Orange
+Heatwave,2017,95,2017-04-05,9,Punjab,46.3,6.3,6.3,65,Moderate,22,Red
+Heatwave,2017,97,2017-04-07,9,Rajasthan,45.8,5.8,5.8,55,Moderate,24,Yellow
+Heatwave,2017,104,2017-04-14,5,Kerala,46.1,6.1,6.1,39,Moderate,6,Yellow
+Heatwave,2017,107,2017-04-17,15,Haryana,41.8,1.8,1.8,106,Mild,3,Orange
+Heatwave,2017,118,2017-04-28,8,Maharashtra,44.4,4.4,4.4,333,Moderate,8,Yellow
+Heatwave,2017,122,2017-05-02,11,Goa,45.6,5.6,5.6,120,Moderate,2,Orange
+Heatwave,2017,128,2017-05-08,12,Tripura,46.3,6.3,6.3,4,Moderate,21,Red
+Heatwave,2017,130,2017-05-10,15,Himachal Pradesh,44.6,4.6,4.6,40,Moderate,16,Orange
+Heatwave,2017,135,2017-05-15,15,West Bengal,46.6,6.6,6.6,34,Moderate,15,Yellow
+Heatwave,2017,139,2017-05-19,8,Karnataka,41.5,1.5,1.5,16,Mild,16,Yellow
+Heatwave,2017,174,2017-06-23,13,Chhattisgarh,42.4,2.4,2.4,95,Mild,23,Red
+Coldwave,2018,47,2018-02-16,4,Rajasthan,1.0,-9.0,9.0,11,Moderate,11,Orange
+Heatwave,2018,94,2018-04-04,3,Delhi,46.7,6.7,6.7,43,Moderate,12,Red
+Heatwave,2018,98,2018-04-08,10,Andhra Pradesh,41.6,1.6,1.6,119,Mild,3,Orange
+Heatwave,2018,112,2018-04-22,15,Kerala,48.5,8.5,8.5,101,Severe,20,Red
+Heatwave,2018,117,2018-04-27,11,Manipur,43.6,3.6,3.6,10,Mild,23,Yellow
+Heatwave,2018,128,2018-05-08,8,Maharashtra,50.2,10.2,10.2,137,Severe,22,Yellow
+Heatwave,2018,135,2018-05-15,5,Assam,47.5,7.5,7.5,42,Severe,2,Orange
+Heatwave,2018,156,2018-06-05,13,Odisha,41.9,1.9,1.9,30,Mild,6,Orange
+Coldwave,2019,-20,2019-12-11,6,J&K,4.0,-6.0,6.0,18,Mild,5,Red
+Coldwave,2019,-8,2019-12-23,6,Uttarakhand,0.4,-9.6,9.6,9,Moderate,20,Yellow
+Coldwave,2019,18,2019-01-18,4,MP,3.5,-6.5,6.5,24,Moderate,11,Red
+Coldwave,2019,41,2019-02-10,4,UP,-0.8,-10.8,10.8,13,Severe,6,Red
+Coldwave,2019,52,2019-02-21,2,Bihar,0.0,-10.0,10.0,2,Moderate,14,Red
+Heatwave,2019,131,2019-05-11,14,Chhattisgarh,42.9,2.9,2.9,16,Mild,8,Orange
+Heatwave,2019,132,2019-05-12,10,Manipur,43.8,3.8,3.8,59,Mild,8,Orange
+Heatwave,2019,139,2019-05-19,4,Tripura,48.1,8.1,8.1,0,Severe,8,Yellow
+Heatwave,2019,158,2019-06-07,12,Odisha,50.9,10.9,10.9,10,Severe,25,Orange
+Heatwave,2019,172,2019-06-21,10,Kerala,45.3,5.3,5.3,29,Moderate,23,Red
+Heatwave,2019,174,2019-06-23,11,Gujarat,44.3,4.3,4.3,11,Moderate,9,Yellow
+Coldwave,2020,-19,2020-12-11,8,Punjab,2.3,-7.7,7.7,2,Moderate,9,Yellow
+Coldwave,2020,-13,2020-12-17,7,Bihar,0.6,-9.4,9.4,7,Moderate,19,Orange
+Coldwave,2020,3,2020-01-03,5,Punjab,3.1,-6.9,6.9,2,Moderate,11,Red
+Coldwave,2020,14,2020-01-14,5,Punjab,3.7,-6.3,6.3,11,Moderate,14,Orange
+Coldwave,2020,20,2020-01-20,7,Bihar,1.4,-8.6,8.6,15,Moderate,12,Red
+Coldwave,2020,48,2020-02-17,6,HP,4.3,-5.7,5.7,22,Mild,2,Red
+Heatwave,2020,88,2020-03-28,3,Himachal Pradesh,44.2,4.2,4.2,23,Moderate,22,Yellow
+Heatwave,2020,138,2020-05-17,6,Uttar Pradesh,45.0,5.0,5.0,37,Moderate,16,Yellow
+Heatwave,2020,145,2020-05-24,4,Uttarakhand,45.1,5.1,5.1,9,Moderate,7,Yellow
+Coldwave,2021,-5,2021-12-26,4,Bihar,1.9,-8.1,8.1,39,Moderate,9,Red
+Coldwave,2021,5,2021-01-05,8,Rajasthan,2.9,-7.1,7.1,28,Moderate,6,Yellow
+Coldwave,2021,8,2021-01-08,9,HP,1.1,-8.9,8.9,9,Moderate,18,Yellow
+Coldwave,2021,37,2021-02-06,10,Rajasthan,2.9,-7.1,7.1,3,Moderate,17,Red
+Coldwave,2021,41,2021-02-10,3,Punjab,0.4,-9.6,9.6,29,Moderate,8,Orange
+Coldwave,2021,48,2021-02-17,2,Haryana,0.2,-9.8,9.8,3,Moderate,5,Orange
+Coldwave,2021,53,2021-02-22,8,Haryana,1.0,-9.0,9.0,19,Moderate,5,Red
+Coldwave,2021,58,2021-02-27,3,MP,1.4,-8.6,8.6,8,Moderate,15,Yellow
+Heatwave,2021,83,2021-03-24,7,Assam,48.0,8.0,8.0,75,Severe,16,Yellow
+Heatwave,2021,91,2021-04-01,7,Delhi,48.2,8.2,8.2,16,Severe,6,Red
+Heatwave,2021,99,2021-04-09,4,Delhi,43.7,3.7,3.7,56,Mild,8,Red
+Heatwave,2021,126,2021-05-06,6,Kerala,44.7,4.7,4.7,16,Moderate,12,Orange
+Heatwave,2021,171,2021-06-20,7,Odisha,44.3,4.3,4.3,30,Moderate,8,Yellow
+Heatwave,2021,173,2021-06-22,3,Chhattisgarh,44.7,4.7,4.7,27,Moderate,10,Yellow
+Heatwave,2021,174,2021-06-23,14,Delhi,43.2,3.2,3.2,14,Mild,18,Yellow
+Coldwave,2022,5,2022-01-05,5,Punjab,2.6,-7.4,7.4,7,Moderate,9,Orange
+Coldwave,2022,17,2022-01-17,3,Punjab,7.0,-3.0,3.0,8,Mild,18,Orange
+Coldwave,2022,57,2022-02-26,10,Bihar,-0.5,-10.5,10.5,1,Severe,14,Yellow
+Heatwave,2022,76,2022-03-17,10,Chhattisgarh,46.3,6.3,6.3,5,Moderate,5,Orange
+Heatwave,2022,78,2022-03-19,8,Arunachal Pradesh,48.1,8.1,8.1,10,Severe,17,Orange
+Heatwave,2022,86,2022-03-27,8,Karnataka,49.8,9.8,9.8,43,Severe,23,Red
+Heatwave,2022,87,2022-03-28,4,Kerala,47.9,7.9,7.9,80,Severe,5,Yellow
+Heatwave,2022,90,2022-03-31,13,Punjab,48.1,8.1,8.1,72,Severe,5,Red
+Heatwave,2022,91,2022-04-01,10,Nagaland,44.2,4.2,4.2,20,Moderate,4,Yellow
+Heatwave,2022,92,2022-04-02,6,Goa,48.0,8.0,8.0,20,Severe,10,Yellow
+Heatwave,2022,92,2022-04-02,15,Maharashtra,42.6,2.6,2.6,50,Mild,5,Red
+Heatwave,2022,99,2022-04-09,4,Tamil Nadu,42.6,2.6,2.6,18,Mild,14,Orange
+Heatwave,2022,129,2022-05-09,3,Punjab,44.3,4.3,4.3,32,Moderate,2,Orange
+Heatwave,2022,152,2022-06-01,11,Telangana,46.5,6.5,6.5,33,Moderate,20,Red
+Heatwave,2022,175,2022-06-24,12,Gujarat,49.7,9.7,9.7,25,Severe,12,Orange
+Coldwave,2023,-21,2023-12-10,10,HP,1.3,-8.7,8.7,12,Moderate,13,Yellow
+Coldwave,2023,-8,2023-12-23,2,UP,1.2,-8.8,8.8,0,Moderate,7,Orange
+Coldwave,2023,-4,2023-12-27,10,Delhi,-2.4,-12.4,12.4,13,Severe,10,Red
+Coldwave,2023,0,2022-12-31,3,MP,3.8,-6.2,6.2,1,Moderate,3,Yellow
+Coldwave,2023,20,2023-01-20,7,MP,3.5,-6.5,6.5,3,Moderate,5,Orange
+Coldwave,2023,28,2023-01-28,10,Delhi,-0.9,-10.9,10.9,21,Severe,17,Red
+Coldwave,2023,37,2023-02-06,8,Rajasthan,3.9,-6.1,6.1,8,Moderate,6,Red
+Coldwave,2023,42,2023-02-11,3,MP,-4.2,-14.2,14.2,9,Severe,19,Orange
+Heatwave,2023,87,2023-03-28,3,Assam,42.0,2.0,2.0,20,Mild,12,Yellow
+Heatwave,2023,103,2023-04-13,3,Andhra Pradesh,46.9,6.9,6.9,10,Moderate,6,Red
+Heatwave,2023,131,2023-05-11,7,Punjab,47.5,7.5,7.5,33,Severe,8,Red
