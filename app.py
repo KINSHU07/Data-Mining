@@ -1,1036 +1,1976 @@
+from pathlib import Path
+from collections import defaultdict
+from itertools import combinations
+import time
+
+import altair as alt
+import numpy as np
+import pandas as pd
 import streamlit as st
 from PIL import Image
-import os
-import pandas as pd
+
 
 st.set_page_config(
-    page_title="🌪️ India Extreme Weather EDA",
-    page_icon="🌪️",
+    page_title="India Weather Extremes",
+    page_icon="🌦️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
 
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+if "theme" not in st.session_state:
+    st.session_state.theme = "storm"
 
-    .main { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); }
-    .block-container { padding: 2rem 3rem 3rem 3rem; }
+THEME = st.session_state.theme
+IS_STORM = THEME == "storm"
 
-    .hero {
-        border-radius: 20px; padding: 2.5rem 3rem; margin-bottom: 2rem;
-        border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    }
-    .hero-cyclone  { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
-    .hero-heatwave { background: linear-gradient(135deg, #1a0a00 0%, #2e1000 50%, #4a1800 100%); }
-    .hero-aqi      { background: linear-gradient(135deg, #0a1a0a 0%, #0d2e1a 50%, #0a3020 100%); }
-    .hero-rainfall { background: linear-gradient(135deg, #001a2e 0%, #00264d 50%, #003870 100%); }
-    .hero h1 { font-size: 2.8rem; font-weight: 800; color: white; margin: 0; letter-spacing: -1px; }
-    .hero p  { color: rgba(255,255,255,0.65); font-size: 1.05rem; margin-top: 0.5rem; }
-    .hero .tag {
-        display: inline-block; border-radius: 20px;
-        padding: 3px 14px; font-size: 0.8rem; font-weight: 600; margin-right: 8px;
-    }
-    .tag-cyclone { background: rgba(232,67,147,0.2); color: #e84393; border: 1px solid rgba(232,67,147,0.4); }
-    .tag-heat    { background: rgba(255,120,0,0.25); color: #ff9944; border: 1px solid rgba(255,120,0,0.4); }
-    .tag-cold    { background: rgba(0,180,216,0.2);  color: #00b4d8; border: 1px solid rgba(0,180,216,0.4); }
-    .tag-aqi     { background: rgba(0,184,148,0.2);  color: #00b894; border: 1px solid rgba(0,184,148,0.4); }
-    .tag-aqi-warn{ background: rgba(253,203,110,0.25); color: #fdcb6e; border: 1px solid rgba(253,203,110,0.4); }
-    .tag-aqi-bad { background: rgba(214,48,49,0.2);  color: #ff7675; border: 1px solid rgba(214,48,49,0.4); }
-    .tag-rain    { background: rgba(9,132,227,0.25);  color: #74b9ff; border: 1px solid rgba(9,132,227,0.45); }
-    .tag-rain-ex { background: rgba(0,100,200,0.2);   color: #a8d8ff; border: 1px solid rgba(0,100,200,0.4); }
-    .tag-rain-def{ background: rgba(225,112,85,0.2);  color: #e17055; border: 1px solid rgba(225,112,85,0.4); }
+PALETTES = {
+    "storm": {
+        "app_bg": "radial-gradient(circle at top left, #18314f 0%, #0b1621 38%, #060b12 100%)",
+        "sidebar_bg": "linear-gradient(180deg, rgba(9,17,27,0.98) 0%, rgba(11,20,31,0.98) 100%)",
+        "panel": "rgba(9, 19, 31, 0.78)",
+        "panel_soft": "rgba(16, 30, 45, 0.68)",
+        "panel_border": "rgba(154, 184, 205, 0.16)",
+        "text": "#edf6ff",
+        "muted": "#94aac0",
+        "subtle": "#6d8399",
+        "accent": "#7dd3fc",
+        "accent_2": "#38bdf8",
+        "cyclone": "#7dd3fc",
+        "heat": "#fb923c",
+        "cold": "#67e8f9",
+        "danger": "#f87171",
+        "shadow": "0 24px 60px rgba(0,0,0,0.28)",
+        "hero_cyclone": "linear-gradient(135deg, rgba(29,78,216,0.38), rgba(14,116,144,0.22), rgba(8,47,73,0.55))",
+        "hero_heat": "linear-gradient(135deg, rgba(194,65,12,0.38), rgba(234,88,12,0.18), rgba(22,78,99,0.30))",
+        "hero_aqi": "linear-gradient(135deg, rgba(5,150,105,0.32), rgba(14,116,144,0.18), rgba(6,78,59,0.48))",
+        "hero_rain": "linear-gradient(135deg, rgba(2,132,199,0.36), rgba(8,47,73,0.30), rgba(12,74,110,0.44))",
+        "tag_bg": "rgba(125, 211, 252, 0.10)",
+    },
+    "paper": {
+        "app_bg": "linear-gradient(180deg, #f7f3eb 0%, #efe8db 100%)",
+        "sidebar_bg": "linear-gradient(180deg, #13212c 0%, #1f3240 100%)",
+        "panel": "rgba(255, 252, 247, 0.94)",
+        "panel_soft": "rgba(255, 249, 241, 0.98)",
+        "panel_border": "rgba(39, 52, 65, 0.10)",
+        "text": "#1a2530",
+        "muted": "#5c6a75",
+        "subtle": "#7c8b96",
+        "accent": "#0f766e",
+        "accent_2": "#0891b2",
+        "cyclone": "#0369a1",
+        "heat": "#c2410c",
+        "cold": "#0f766e",
+        "danger": "#b91c1c",
+        "shadow": "0 18px 40px rgba(60,52,46,0.08)",
+        "hero_cyclone": "linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 45%, #ecfeff 100%)",
+        "hero_heat": "linear-gradient(135deg, #fff7ed 0%, #fffbeb 45%, #ecfeff 100%)",
+        "hero_aqi": "linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 48%, #f8fafc 100%)",
+        "hero_rain": "linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 48%, #eef2ff 100%)",
+        "tag_bg": "rgba(15, 118, 110, 0.08)",
+    },
+}
+UI = PALETTES[THEME]
 
-    .kpi-grid { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
-    .kpi-card {
-        flex: 1; min-width: 140px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
-        padding: 1.2rem 1.5rem; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-        transition: transform 0.2s;
-    }
-    .kpi-card:hover { transform: translateY(-3px); }
-    .kpi-card-cyclone { background: linear-gradient(135deg, #1e1e3f, #2d2d6b); }
-    .kpi-card-heat    { background: linear-gradient(135deg, #2e1000, #4a1800); }
-    .kpi-card-aqi     { background: linear-gradient(135deg, #0a1f0a, #0d3020); }
-    .kpi-card-rainfall{ background: linear-gradient(135deg, #00152e, #001f47); }
-    .kpi-val-cyclone { font-size: 2rem; font-weight: 800; color: #e84393; }
-    .kpi-val-heat    { font-size: 2rem; font-weight: 800; color: #ff9944; }
-    .kpi-val-cold    { font-size: 2rem; font-weight: 800; color: #00b4d8; }
-    .kpi-val-aqi     { font-size: 2rem; font-weight: 800; color: #00b894; }
-    .kpi-val-aqi-warn{ font-size: 2rem; font-weight: 800; color: #fdcb6e; }
-    .kpi-val-aqi-bad { font-size: 2rem; font-weight: 800; color: #ff7675; }
-    .kpi-val-rain    { font-size: 2rem; font-weight: 800; color: #74b9ff; }
-    .kpi-val-rain-ex { font-size: 2rem; font-weight: 800; color: #0984e3; }
-    .kpi-val-rain-def{ font-size: 2rem; font-weight: 800; color: #e17055; }
-    .kpi-lbl { font-size: 0.78rem; color: rgba(255,255,255,0.55); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+ROOT = Path(__file__).resolve().parent
+CHARTS_DIR = ROOT / "CHARTS"
 
-    .chart-card {
-        background: linear-gradient(135deg, #16213e, #1a1a2e);
-        border: 1px solid rgba(255,255,255,0.07); border-radius: 18px;
-        padding: 1.8rem; margin-bottom: 1.5rem; box-shadow: 0 12px 36px rgba(0,0,0,0.35);
-    }
-    .chart-card-heat {
-        background: linear-gradient(135deg, #1a0a00, #1e1200);
-        border: 1px solid rgba(255,120,0,0.12); border-radius: 18px;
-        padding: 1.8rem; margin-bottom: 1.5rem; box-shadow: 0 12px 36px rgba(0,0,0,0.35);
-    }
-    .chart-card-aqi {
-        background: linear-gradient(135deg, #0a1f0a, #0d2a1a);
-        border: 1px solid rgba(0,184,148,0.15); border-radius: 18px;
-        padding: 1.8rem; margin-bottom: 1.5rem; box-shadow: 0 12px 36px rgba(0,0,0,0.35);
-    }
-    .chart-card-rainfall {
-        background: linear-gradient(135deg, #001a2e, #002244);
-        border: 1px solid rgba(9,132,227,0.18); border-radius: 18px;
-        padding: 1.8rem; margin-bottom: 1.5rem; box-shadow: 0 12px 36px rgba(0,0,0,0.35);
-    }
-    .chart-title { font-size: 1.15rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.4rem; }
-    .chart-desc  { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.55; margin-bottom: 1rem; }
-    .chart-badge {
-        display: inline-block; font-size: 0.72rem; font-weight: 600; border-radius: 8px;
-        padding: 2px 10px; margin-right: 6px; margin-bottom: 10px;
-    }
-    .badge-dist   { background: rgba(108,92,231,0.25); color: #a29bfe; border: 1px solid rgba(108,92,231,0.4); }
-    .badge-trend  { background: rgba(232,67,147,0.2);  color: #fd79a8; border: 1px solid rgba(232,67,147,0.4); }
-    .badge-geo    { background: rgba(0,184,148,0.2);   color: #55efc4; border: 1px solid rgba(0,184,148,0.4); }
-    .badge-corr   { background: rgba(253,203,110,0.2); color: #fdcb6e; border: 1px solid rgba(253,203,110,0.4); }
-    .badge-impact { background: rgba(225,112,85,0.2);  color: #e17055; border: 1px solid rgba(225,112,85,0.4); }
-    .badge-heat   { background: rgba(255,120,0,0.2);   color: #ff9944; border: 1px solid rgba(255,120,0,0.4); }
-    .badge-cold   { background: rgba(0,180,216,0.2);   color: #00b4d8; border: 1px solid rgba(0,180,216,0.4); }
-    .badge-aqi    { background: rgba(0,184,148,0.2);   color: #00b894; border: 1px solid rgba(0,184,148,0.4); }
-    .badge-poll   { background: rgba(214,48,49,0.2);   color: #ff7675; border: 1px solid rgba(214,48,49,0.4); }
-    .badge-rain   { background: rgba(9,132,227,0.22);  color: #74b9ff; border: 1px solid rgba(9,132,227,0.4); }
-    .badge-rain-x { background: rgba(0,60,150,0.25);   color: #a8d8ff; border: 1px solid rgba(0,60,150,0.4); }
 
-    /* ── Sidebar ── */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0f0c29 0%, #302b63 100%) !important;
-        border-right: 1px solid rgba(255,255,255,0.08) !important;
-        min-width: 260px !important;
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-    [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] span,
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] div,
-    [data-testid="stSidebar"] h1,
-    [data-testid="stSidebar"] h2,
-    [data-testid="stSidebar"] h3,
-    [data-testid="stSidebar"] small {
-        color: rgba(255,255,255,0.85) !important;
-    }
-    [data-testid="collapsedControl"],
-    [data-testid="stSidebarCollapsedControl"] {
-        display: flex !important; visibility: visible !important; opacity: 1 !important;
-        background: #e84393 !important; border-radius: 0 8px 8px 0 !important;
-        box-shadow: 3px 0 20px rgba(232,67,147,0.7) !important; z-index: 9999 !important;
-    }
-    [data-testid="collapsedControl"] svg,
-    [data-testid="stSidebarCollapsedControl"] svg {
-        fill: white !important; color: white !important; stroke: white !important;
-    }
+@st.cache_data
+def load_data():
+    cyclone_path = ROOT / "cyclone.csv"
+    heatcold_path = ROOT / "heatcold.csv"
+    aqi_path = ROOT / "10_air_quality_index_2015_2023.csv"
+    rain_path = ROOT / "02_monthly_rainfall_district_1901_2023.csv"
 
-    #MainMenu { visibility: hidden; }
-    footer { visibility: hidden; }
-    .stDeployButton { display: none !important; }
-
-    .section-header-cyclone {
-        font-size: 1.35rem; font-weight: 700; color: white;
-        border-left: 4px solid #e84393; padding-left: 14px; margin: 2rem 0 1.2rem 0;
-    }
-    .section-header-heat {
-        font-size: 1.35rem; font-weight: 700; color: white;
-        border-left: 4px solid #ff9944; padding-left: 14px; margin: 2rem 0 1.2rem 0;
-    }
-    .section-header-aqi {
-        font-size: 1.35rem; font-weight: 700; color: white;
-        border-left: 4px solid #00b894; padding-left: 14px; margin: 2rem 0 1.2rem 0;
-    }
-    .section-header-rainfall {
-        font-size: 1.35rem; font-weight: 700; color: white;
-        border-left: 4px solid #0984e3; padding-left: 14px; margin: 2rem 0 1.2rem 0;
-    }
-
-    .insight-cyclone {
-        background: linear-gradient(135deg, rgba(232,67,147,0.08), rgba(108,92,231,0.08));
-        border: 1px solid rgba(232,67,147,0.25); border-radius: 12px;
-        padding: 1rem 1.3rem; margin-top: 1rem; font-size: 0.88rem;
-        color: rgba(255,255,255,0.75); line-height: 1.6;
-    }
-    .insight-cyclone strong { color: #fd79a8; }
-
-    .insight-heat {
-        background: linear-gradient(135deg, rgba(255,120,0,0.08), rgba(255,60,0,0.08));
-        border: 1px solid rgba(255,120,0,0.25); border-radius: 12px;
-        padding: 1rem 1.3rem; margin-top: 1rem; font-size: 0.88rem;
-        color: rgba(255,255,255,0.75); line-height: 1.6;
-    }
-    .insight-heat strong { color: #ff9944; }
-
-    .insight-aqi {
-        background: linear-gradient(135deg, rgba(0,184,148,0.08), rgba(0,150,100,0.08));
-        border: 1px solid rgba(0,184,148,0.25); border-radius: 12px;
-        padding: 1rem 1.3rem; margin-top: 1rem; font-size: 0.88rem;
-        color: rgba(255,255,255,0.75); line-height: 1.6;
-    }
-    .insight-aqi strong { color: #00b894; }
-
-    .insight-rainfall {
-        background: linear-gradient(135deg, rgba(9,132,227,0.08), rgba(0,80,160,0.08));
-        border: 1px solid rgba(9,132,227,0.28); border-radius: 12px;
-        padding: 1rem 1.3rem; margin-top: 1rem; font-size: 0.88rem;
-        color: rgba(255,255,255,0.75); line-height: 1.6;
-    }
-    .insight-rainfall strong { color: #74b9ff; }
-
-    [data-testid="stSidebar"] .stRadio > div > label {
-        padding: 5px 10px !important; border-radius: 8px !important;
-        transition: background 0.2s !important; cursor: pointer !important;
-    }
-    [data-testid="stSidebar"] .stRadio > div > label:hover {
-        background: rgba(232,67,147,0.15) !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# ── Helpers ───────────────────────────────────────────────────────────────────
-def load_img(name):
-    return Image.open(name) if os.path.exists(name) else None
-
-def try_load_csv(path):
-    try:
-        return pd.read_csv(path)
-    except Exception:
-        return None
-
-def fmt(v, prefix="", suffix=""):
-    return f"{prefix}{v:,}{suffix}" if isinstance(v, (int, float)) else str(v)
-
-def show_chart(card_class, title, badge_class, badge_label, desc, img_path, info_msg=None):
-    st.markdown(f"""
-    <div class="{card_class}">
-      <div class="chart-title">{title}</div>
-      <span class="chart-badge {badge_class}">{badge_label}</span>
-      <div class="chart-desc">{desc}</div>
-    """, unsafe_allow_html=True)
-    img = load_img(img_path)
-    if img:
-        st.image(img, use_column_width=True)
+    if cyclone_path.exists():
+        cyc = pd.read_csv(cyclone_path)
     else:
-        st.info(info_msg or f"📂 Chart not found: {img_path} — run the notebook to generate charts.")
-    st.markdown('</div>', unsafe_allow_html=True)
+        cyc = pd.DataFrame(
+            {
+                "deaths": [100] * 103,
+                "max_wind_kmh": [280] * 103,
+                "damage_crore_inr": [500] * 103,
+                "landfall": [1, 0] * 51 + [1],
+                "category": ["Super Cyclonic Storm"] * 15
+                + ["Extremely Severe Cyclonic Storm"] * 19
+                + ["Very Severe Cyclonic Storm"] * 69,
+            }
+        )
 
-# ── Load datasets ─────────────────────────────────────────────────────────────
-cyc_df  = try_load_csv("cyclone.csv")
-hw_df   = try_load_csv("heatcold.csv")
-aqi_df  = try_load_csv("10_air_quality_index_2015_2023.csv")
-rain_df = try_load_csv("02_monthly_rainfall_district_1901_2023.csv")
+    if heatcold_path.exists():
+        hw_df = pd.read_csv(heatcold_path)
+    else:
+        hw_df = pd.DataFrame(
+            {
+                "event_type": ["Heatwave"] * 387 + ["Coldwave"] * 226,
+                "peak_temp_c": [47.0] * 387 + [1.0] * 226,
+                "estimated_deaths": [50] * 613,
+                "severity": ["Severe"] * 200 + ["Moderate"] * 413,
+                "imd_alert": ["Red"] * 150 + ["Orange"] * 250 + ["Yellow"] * 213,
+                "start_date": pd.date_range("1980-01-01", periods=613, freq="25D"),
+            }
+        )
 
-# Cyclone KPIs
-if cyc_df is not None:
-    total_cyclones = len(cyc_df)
-    total_deaths_c = int(cyc_df['deaths'].sum()) if 'deaths' in cyc_df.columns else "N/A"
-    max_wind       = cyc_df['max_wind_kmh'].max() if 'max_wind_kmh' in cyc_df.columns else "N/A"
-    total_damage   = int(cyc_df['damage_crore_inr'].sum()) if 'damage_crore_inr' in cyc_df.columns else "N/A"
-    landfall_pct   = round(cyc_df['landfall'].sum() / len(cyc_df) * 100, 1) if 'landfall' in cyc_df.columns else "N/A"
-    super_cyclones = int((cyc_df['category'] == 'Super Cyclonic Storm').sum()) if 'category' in cyc_df.columns else "N/A"
-else:
-    total_cyclones = total_deaths_c = max_wind = total_damage = landfall_pct = super_cyclones = "N/A"
+    hw_df["start_date"] = pd.to_datetime(hw_df["start_date"], errors="coerce")
 
-# Heatwave KPIs
-if hw_df is not None:
-    hw_only        = hw_df[hw_df['event_type'] == 'Heatwave'] if 'event_type' in hw_df.columns else hw_df
-    cw_only        = hw_df[hw_df['event_type'] == 'Coldwave'] if 'event_type' in hw_df.columns else hw_df
-    total_events   = len(hw_df)
-    n_heatwaves    = len(hw_only)
-    n_coldwaves    = len(cw_only)
-    total_deaths_h = int(hw_df['estimated_deaths'].sum()) if 'estimated_deaths' in hw_df.columns else "N/A"
-    max_temp       = hw_df['peak_temp_c'].max() if 'peak_temp_c' in hw_df.columns else "N/A"
-    states_affected= hw_df['state'].nunique() if 'state' in hw_df.columns else "N/A"
-else:
-    total_events = n_heatwaves = n_coldwaves = total_deaths_h = max_temp = states_affected = "N/A"
+    if aqi_path.exists():
+        aqi_df = pd.read_csv(aqi_path)
+    else:
+        aqi_df = pd.DataFrame(
+            {
+                "aqi": [120, 180, 90, 240],
+                "station": ["Station A", "Station B", "Station C", "Station D"],
+                "category": ["Moderate", "Poor", "Satisfactory", "Very Poor"],
+                "dominant_pollutant": ["PM2.5", "PM10", "NO2", "PM2.5"],
+                "zone": ["North", "West", "South", "East"],
+                "month": [1, 5, 8, 11],
+                "pm25_ugm3": [55, 75, 30, 95],
+            }
+        )
 
-# AQI KPIs
-if aqi_df is not None:
-    aqi_total_records = f"{len(aqi_df):,}"
-    aqi_mean          = round(aqi_df['aqi'].mean(), 1) if 'aqi' in aqi_df.columns else "N/A"
-    aqi_max           = int(aqi_df['aqi'].max()) if 'aqi' in aqi_df.columns else "N/A"
-    aqi_stations      = aqi_df['station'].nunique() if 'station' in aqi_df.columns else "N/A"
-    aqi_severe_pct    = round(
-        aqi_df['category'].isin(['Poor','Very Poor','Severe']).sum() / len(aqi_df) * 100, 1
-    ) if 'category' in aqi_df.columns else "N/A"
-    aqi_dominant      = aqi_df['dominant_pollutant'].value_counts().idxmax() if 'dominant_pollutant' in aqi_df.columns else "N/A"
-else:
-    aqi_total_records = aqi_mean = aqi_max = aqi_stations = aqi_severe_pct = aqi_dominant = "N/A"
+    if rain_path.exists():
+        rain_df = pd.read_csv(rain_path)
+    else:
+        rain_df = pd.DataFrame(
+            {
+                "rainfall_mm": [110.0, 240.0, 45.0, 10.0],
+                "state": ["Kerala", "Assam", "Rajasthan", "Gujarat"],
+                "district": ["D1", "D2", "D3", "D4"],
+                "category": ["Normal", "Excess", "Deficient", "Scanty"],
+                "month_num": [7, 8, 6, 1],
+                "departure_pct": [5, 65, -35, -70],
+                "agro_zone": ["Humid", "Humid", "Arid", "Semi-Arid"],
+            }
+        )
 
-# Rainfall KPIs
-if rain_df is not None:
-    rain_total_records = f"{len(rain_df):,}"
-    rain_mean          = round(rain_df['rainfall_mm'].mean(), 1) if 'rainfall_mm' in rain_df.columns else "N/A"
-    rain_max           = round(rain_df['rainfall_mm'].max(), 0) if 'rainfall_mm' in rain_df.columns else "N/A"
-    rain_states        = rain_df['state'].nunique() if 'state' in rain_df.columns else "N/A"
-    rain_districts     = rain_df['district'].nunique() if 'district' in rain_df.columns else "N/A"
-    rain_excess_pct    = round(
-        (rain_df['category'] == 'Excess').sum() / len(rain_df) * 100, 1
-    ) if 'category' in rain_df.columns else "N/A"
-    rain_deficit_pct   = round(
-        rain_df['category'].isin(['Deficient','Scanty']).sum() / len(rain_df) * 100, 1
-    ) if 'category' in rain_df.columns else "N/A"
-else:
-    rain_total_records = rain_mean = rain_max = rain_states = rain_districts = rain_excess_pct = rain_deficit_pct = "N/A"
+    return cyc, hw_df, aqi_df, rain_df
 
-# ── Section lists ─────────────────────────────────────────────────────────────
-CYCLONE_SECTIONS = [
-    "📋 Overview & KPIs",
-    "📅 Temporal Patterns",
-    "💨 Intensity Analysis",
-    "🌊 Impact & Damage",
-    "🗺️ Geographic Patterns",
-    "🔗 Correlations",
-]
-HEAT_SECTIONS = [
-    "📋 Event Overview & KPIs",
-    "📅 Annual & Seasonal Trends",
-    "🌡️ Temperature & Severity",
-    "💀 Deaths & Mortality Impact",
-    "🗺️ State-wise Risk Patterns",
-    "🔗 Correlations & Pairplot",
-]
-AQI_SECTIONS = [
-    "📋 Overview & KPIs",
-    "📅 Annual & Seasonal Trends",
-    "💨 Pollutant & Category Analysis",
-    "🏭 Station & Geographic Patterns",
-    "🔗 Correlations & Distributions",
-]
-RAINFALL_SECTIONS = [
-    "📋 Overview & KPIs",
-    "📅 Annual & Seasonal Trends",
-    "💧 Category & Departure Analysis",
-    "🗺️ State & Zone Patterns",
-    "🔗 Correlations & Distributions",
-]
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# SIDEBAR
-# ═══════════════════════════════════════════════════════════════════════════════
-with st.sidebar:
-    st.markdown("## 🌪️ India Weather EDA")
-    st.markdown("---")
+cyc, hw_df, aqi_df, rain_df = load_data()
 
-    dashboard = st.radio(
-        "🗂️ Select Dashboard",
-        ["🌀 Cyclone Dashboard", "🌡️ Heatwave & Coldwave Dashboard", "🌫️ Air Quality Index Dashboard", "🌧️ Rainfall Dashboard"],
+
+def chart_path(filename: str) -> Path:
+    return CHARTS_DIR / filename
+
+
+def load_image(path: Path):
+    return Image.open(path) if path.exists() else None
+
+
+st.markdown(
+    f"""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+    :root {{
+        --app-bg: {UI["app_bg"]};
+        --sidebar-bg: {UI["sidebar_bg"]};
+        --panel: {UI["panel"]};
+        --panel-soft: {UI["panel_soft"]};
+        --panel-border: {UI["panel_border"]};
+        --text: {UI["text"]};
+        --muted: {UI["muted"]};
+        --subtle: {UI["subtle"]};
+        --accent: {UI["accent"]};
+        --accent-2: {UI["accent_2"]};
+        --shadow: {UI["shadow"]};
+    }}
+
+    html, body, [class*="css"] {{
+        font-family: 'Manrope', sans-serif !important;
+    }}
+
+    .stApp {{
+        background: var(--app-bg) !important;
+        color: var(--text);
+    }}
+
+    .block-container {{
+        padding: 1rem 1.6rem 2.5rem 1.6rem !important;
+        max-width: 1440px !important;
+    }}
+
+    [data-testid="stSidebar"] {{
+        background: var(--sidebar-bg) !important;
+        border-right: 1px solid rgba(255,255,255,0.08) !important;
+    }}
+
+    [data-testid="stSidebar"] * {{
+        color: #f4f8fb !important;
+    }}
+
+    [data-testid="stSidebar"] .stRadio > div {{
+        gap: 0.35rem;
+    }}
+
+    [data-testid="stSidebar"] .stRadio label {{
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        border-radius: 14px !important;
+        padding: 0.75rem 0.9rem !important;
+        transition: 0.18s ease;
+    }}
+
+    [data-testid="stSidebar"] .stRadio label:hover {{
+        background: rgba(255,255,255,0.10) !important;
+        border-color: rgba(255,255,255,0.18) !important;
+    }}
+
+    [data-testid="stSidebar"] .stRadio label:has(input:checked) {{
+        background:
+            linear-gradient(135deg, rgba(125,211,252,0.22), rgba(56,189,248,0.10)) !important;
+        border-color: rgba(125,211,252,0.48) !important;
+        box-shadow: 0 10px 28px rgba(14,165,233,0.18) !important;
+    }}
+
+    [data-testid="stSidebar"] .stRadio label:has(input:checked) p {{
+        font-weight: 800 !important;
+        color: #ffffff !important;
+    }}
+
+    .sidebar-step {{
+        margin: 0.9rem 0 0.5rem 0;
+        padding: 0.55rem 0.75rem;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: rgba(255,255,255,0.72);
+    }}
+
+    [data-testid="stSidebar"] .stButton > button {{
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.08);
+        color: #ffffff;
+        font-weight: 700;
+        min-height: 2.8rem;
+    }}
+
+    [data-testid="stSidebarCollapseButton"] {{
+        visibility: visible !important;
+        display: flex !important;
+        opacity: 1 !important;
+        border-radius: 999px !important;
+        background: rgba(255,255,255,0.08) !important;
+    }}
+
+    .panel {{
+        background:
+            linear-gradient(135deg, rgba(255,255,255,0.065), rgba(255,255,255,0.018)),
+            var(--panel);
+        border: 1px solid rgba(255,255,255,0.13);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px);
+    }}
+
+    .hero {{
+        padding: 1.55rem 1.7rem 1.45rem 1.7rem;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 1rem;
+        border-radius: 20px;
+    }}
+
+    .hero::after {{
+        content: "";
+        position: absolute;
+        inset: auto -80px -80px auto;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,255,255,0.16), rgba(255,255,255,0));
+        filter: blur(8px);
+    }}
+
+    .eyebrow {{
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0;
+        color: var(--muted);
+        font-weight: 800;
+        margin-bottom: 0.55rem;
+    }}
+
+    .hero-title {{
+        font-size: clamp(1.85rem, 3vw, 2.75rem);
+        line-height: 1.08;
+        font-weight: 800;
+        margin: 0;
+        color: var(--text);
+        letter-spacing: 0;
+    }}
+
+    .hero-copy {{
+        max-width: 900px;
+        margin-top: 0.65rem;
+        color: var(--muted);
+        font-size: 0.98rem;
+        line-height: 1.6;
+    }}
+
+    .chip {{
+        display: inline-block;
+        padding: 0.38rem 0.72rem;
+        border-radius: 999px;
+        margin-right: 0.45rem;
+        margin-top: 0.6rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border: 1px solid var(--panel-border);
+        background: """
+    + UI["tag_bg"]
+    + """;
+        color: var(--text);
+    }}
+
+    .section-title {{
+        color: var(--text);
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: 0;
+        margin: 0.15rem 0 0 0;
+    }}
+
+    .section-kicker {{
+        color: var(--accent);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0;
+        font-weight: 800;
+        margin-top: 1.35rem;
+        padding-left: 0.8rem;
+        border-left: 4px solid var(--accent);
+    }}
+
+    .section-box {{
+        margin: 1.35rem 0 1rem 0;
+        padding: 1rem 1.15rem;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.13);
+        background:
+            radial-gradient(circle at top right, rgba(125,211,252,0.11), transparent 36%),
+            linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025)),
+            var(--panel);
+        box-shadow: var(--shadow);
+    }}
+
+    .section-box .section-kicker {{
+        margin-top: 0;
+    }}
+
+    .stat-card {{
+        background:
+            radial-gradient(circle at top right, rgba(125,211,252,0.16), transparent 34%),
+            linear-gradient(145deg, rgba(255,255,255,0.105), rgba(255,255,255,0.035)),
+            var(--panel-soft);
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 20px;
+        padding: 1.05rem 1.05rem 1rem 1.05rem;
+        min-height: 128px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 0.95rem;
+    }}
+
+    .stat-card::after {{
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    }}
+
+    .stat-value {{
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-top: 0.65rem;
+        color: var(--text);
+    }}
+
+    .stat-label {{
+        color: var(--muted);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0;
+        font-weight: 800;
+    }}
+
+    .stat-accent {{
+        width: 54px;
+        height: 4px;
+        border-radius: 999px;
+        margin-bottom: 0.7rem;
+        box-shadow: 0 0 20px currentColor;
+    }}
+
+    .chart-shell {{
+        background:
+            linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025)),
+            var(--panel);
+        border: 1px solid rgba(255,255,255,0.13);
+        border-radius: 24px;
+        padding: 1.25rem;
+        margin-bottom: 1.15rem;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }}
+
+    div[data-testid="stVerticalBlockBorderWrapper"] {{
+        border: 1px solid rgba(255,255,255,0.16) !important;
+        border-radius: 24px !important;
+        background:
+            radial-gradient(circle at top right, rgba(125,211,252,0.16), transparent 30%),
+            linear-gradient(145deg, rgba(255,255,255,0.09), rgba(255,255,255,0.026)),
+            var(--panel) !important;
+        box-shadow: 0 22px 48px rgba(0,0,0,0.34) !important;
+        padding: 0.25rem !important;
+        margin-bottom: 1rem !important;
+    }}
+
+    div[data-testid="stVerticalBlockBorderWrapper"] > div {{
+        background: transparent !important;
+    }}
+
+    .chart-head {{
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.9rem;
+        border-bottom: 1px solid var(--panel-border);
+    }}
+
+    .boxed-chart-head {{
+        margin-bottom: 0.8rem;
+    }}
+
+    .chart-title {{
+        color: var(--text);
+        font-weight: 800;
+        font-size: 1.05rem;
+        margin: 0;
+    }}
+
+    .chart-copy {{
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.7;
+        margin: 0.45rem 0 0 0;
+        max-width: 900px;
+    }}
+
+    .chart-badge {{
+        white-space: nowrap;
+        border-radius: 999px;
+        padding: 0.45rem 0.8rem;
+        border: 1px solid var(--panel-border);
+        background: rgba(255,255,255,0.05);
+        color: var(--text);
+        font-size: 0.72rem;
+        font-weight: 800;
+    }}
+
+    .chart-media {{
+        border-radius: 18px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--panel-border);
+    }}
+
+    .chart-shell [data-testid="stImage"] img {{
+        border-radius: 18px;
+    }}
+
+    .stMetric {{
+        background:
+            linear-gradient(145deg, rgba(255,255,255,0.095), rgba(255,255,255,0.035)),
+            var(--panel-soft);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 18px;
+        padding: 0.9rem 1rem;
+        box-shadow: var(--shadow);
+    }}
+
+    .insight {{
+        border-radius: 18px;
+        padding: 1.05rem 1.15rem;
+        margin: 0.4rem 0 1.2rem 0;
+        border: 1px solid rgba(125,211,252,0.18);
+        background:
+            radial-gradient(circle at top left, rgba(125,211,252,0.12), transparent 32%),
+            linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.022)),
+            var(--panel);
+        color: var(--text);
+        line-height: 1.7;
+        box-shadow: var(--shadow);
+    }}
+
+    .insight b {{
+        color: var(--accent);
+    }}
+
+    .empty-chart {{
+        border: 1px dashed var(--panel-border);
+        border-radius: 18px;
+        background: rgba(255,255,255,0.03);
+        color: var(--muted);
+        padding: 3rem 1rem;
+        text-align: center;
+    }}
+
+    .project-card {{
+        border-radius: 24px;
+        padding: 1.35rem;
+        border: 1px solid var(--panel-border);
+        box-shadow: var(--shadow);
+    }}
+
+    footer {{
+        visibility: hidden !important;
+    }}
+
+    .stDeployButton {{
+        display: none !important;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+def render_hero(title: str, copy: str, chips: list[str], background: str):
+    chips_html = "".join([f"<span class='chip'>{item}</span>" for item in chips])
+    st.markdown(
+        f"""
+        <div class="panel hero" style="background:{background};">
+            <div class="eyebrow">India Weather Extremes</div>
+            <h1 class="hero-title">{title}</h1>
+            <p class="hero-copy">{copy}</p>
+            <div>{chips_html}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
-    st.markdown("---")
 
-    db_key = "cyc" if "Cyclone" in dashboard else ("hw" if "Heatwave" in dashboard else ("aqi" if "Air Quality" in dashboard else "rain"))
-    if st.session_state.get("prev_db_key", db_key) != db_key:
-        st.session_state["section_idx"] = 0
-    st.session_state["prev_db_key"] = db_key
+def stat_card(value, label: str, accent: str):
+    st.markdown(
+        f"""
+        <div class="stat-card">
+            <div class="stat-accent" style="background:{accent};"></div>
+            <div class="stat-label">{label}</div>
+            <div class="stat-value">{value}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    if dashboard == "🌀 Cyclone Dashboard":
+
+def section_heading(kicker: str, title: str):
+    st.markdown(
+        f"""
+        <div class="section-box">
+            <div class="section-kicker">{kicker}</div>
+            <div class="section-title">{title}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def show_chart(title: str, badge: str, description: str, filename: str | None = None, renderer=None):
+    with st.container(border=True):
         st.markdown(
-            "**Dataset:** Indian Ocean Cyclones  \n"
-            "**Period:** 1990 – 2023  \n"
-            "**Records:** 103 cyclones  \n"
-            "**Features:** 17 variables"
+            f"""
+            <div class="chart-head boxed-chart-head">
+                <div>
+                    <p class="chart-title">{title}</p>
+                    <p class="chart-copy">{description}</p>
+                </div>
+                <div class="chart-badge">{badge}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-        st.markdown("---")
-        section = st.radio(
-            "📊 Jump to Section",
-            CYCLONE_SECTIONS,
-            index=st.session_state.get("section_idx", 0),
-            key="section_cyclone",
-        )
-        st.session_state["section_idx"] = CYCLONE_SECTIONS.index(section)
-        st.markdown("---")
-        st.markdown("**Charts:** 15 unique visualisations  \n**Types:** Bar, Line, Polar, Violin, Scatter, Heatmap, Donut, KDE, Hexbin, Boxplot, Pairplot")
 
-    elif dashboard == "🌡️ Heatwave & Coldwave Dashboard":
+        image = load_image(chart_path(filename)) if filename else None
+        if renderer is not None:
+            st.markdown('<div class="chart-media">', unsafe_allow_html=True)
+            renderer()
+            st.markdown("</div>", unsafe_allow_html=True)
+        elif image is not None:
+            st.markdown('<div class="chart-media">', unsafe_allow_html=True)
+            st.image(image, use_container_width=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+        else:
+            st.markdown(
+                f"""
+                <div class="empty-chart">
+                    <div style="font-size:1.2rem;font-weight:800;margin-bottom:0.4rem;">Chart image not found</div>
+                    <div>Expected file: <code>{filename or "chart image"}</code> inside the <code>CHARTS/</code> folder.</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+
+def insight(text: str):
+    st.markdown(f"<div class='insight'><b>Insight.</b> {text}</div>", unsafe_allow_html=True)
+
+
+def data_notice(filename: str):
+    if (ROOT / filename).exists():
+        return
+    st.markdown(
+        f"""
+        <div class="insight" style="border-color:rgba(251,146,60,0.35);background:linear-gradient(135deg,rgba(251,146,60,0.10),rgba(255,255,255,0.025));">
+            <b>Dataset file missing.</b> Add <code>{filename}</code> to the project folder to show real KPIs and charts.
+            The current values are lightweight placeholder rows so the layout can still render.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def native_category_chart(df, column, color):
+    if column not in df or df.empty:
+        st.info("No category data available for this chart.")
+        return
+    chart_df = df[column].fillna("Unknown").value_counts().reset_index()
+    chart_df.columns = [column, "records"]
+    chart = (
+        alt.Chart(chart_df)
+        .mark_arc(innerRadius=64, outerRadius=118, stroke="#0b1621", strokeWidth=2)
+        .encode(
+            theta=alt.Theta("records:Q"),
+            color=alt.Color(f"{column}:N", legend=alt.Legend(title=None), scale=alt.Scale(scheme=color)),
+            tooltip=[alt.Tooltip(f"{column}:N", title="Category"), alt.Tooltip("records:Q", title="Records")],
+        )
+        .properties(height=330)
+    )
+    labels = (
+        alt.Chart(chart_df)
+        .mark_text(radius=148, size=12, fontWeight="bold")
+        .encode(theta="records:Q", text="records:Q", color=alt.value(UI["text"]))
+    )
+    st.altair_chart(chart + labels, use_container_width=True)
+
+
+def native_bar_chart(df, column, color_value):
+    if column not in df or df.empty:
+        st.info("No data available for this chart.")
+        return
+    chart_df = df[column].fillna("Unknown").value_counts().head(15).reset_index()
+    chart_df.columns = [column, "records"]
+    chart = (
+        alt.Chart(chart_df)
+        .mark_bar(cornerRadiusTopRight=7, cornerRadiusBottomRight=7, color=color_value)
+        .encode(
+            y=alt.Y(f"{column}:N", sort="-x", title=None),
+            x=alt.X("records:Q", title="Records"),
+            tooltip=[alt.Tooltip(f"{column}:N", title=column.replace("_", " ").title()), "records:Q"],
+        )
+        .properties(height=max(260, len(chart_df) * 30))
+    )
+    st.altair_chart(chart, use_container_width=True)
+
+
+def native_month_chart(df, month_column, value_column, color_value):
+    if month_column not in df or value_column not in df or df.empty:
+        st.info("No monthly data available for this chart.")
+        return
+    chart_df = df.groupby(month_column, as_index=False)[value_column].mean().sort_values(month_column)
+    chart = (
+        alt.Chart(chart_df)
+        .mark_area(
+            line={"color": color_value, "strokeWidth": 3},
+            color=alt.Gradient(
+                gradient="linear",
+                stops=[
+                    alt.GradientStop(color=color_value, offset=0),
+                    alt.GradientStop(color="rgba(255,255,255,0.02)", offset=1),
+                ],
+                x1=1,
+                x2=1,
+                y1=1,
+                y2=0,
+            ),
+            interpolate="monotone",
+        )
+        .encode(
+            x=alt.X(f"{month_column}:O", title="Month"),
+            y=alt.Y(f"{value_column}:Q", title=value_column.replace("_", " ").title()),
+            tooltip=[month_column, alt.Tooltip(f"{value_column}:Q", format=".1f")],
+        )
+        .properties(height=320)
+    )
+    st.altair_chart(chart, use_container_width=True)
+
+
+def get_support(transactions, itemset, n):
+    return sum(1 for transaction in transactions if itemset.issubset(transaction)) / n
+
+
+def make_rules(all_freq, transactions, min_conf):
+    n = len(transactions)
+    rules = []
+    for itemset, supp in all_freq.items():
+        if len(itemset) < 2:
+            continue
+        for size in range(1, len(itemset)):
+            for ant_tuple in combinations(sorted(itemset), size):
+                antecedent = frozenset(ant_tuple)
+                consequent = itemset - antecedent
+                ant_supp = all_freq.get(antecedent, get_support(transactions, antecedent, n))
+                con_supp = all_freq.get(consequent, get_support(transactions, consequent, n))
+                if ant_supp == 0 or con_supp == 0:
+                    continue
+                confidence = supp / ant_supp
+                if confidence >= min_conf:
+                    lift = confidence / con_supp
+                    leverage = supp - ant_supp * con_supp
+                    conviction = (1 - con_supp) / (1 - confidence) if confidence < 1 else 99.9
+                    rules.append(
+                        {
+                            "antecedent": " + ".join(sorted(antecedent)),
+                            "consequent": " + ".join(sorted(consequent)),
+                            "support": round(supp, 4),
+                            "confidence": round(confidence, 4),
+                            "lift": round(lift, 4),
+                            "leverage": round(leverage, 4),
+                            "conviction": round(min(conviction, 99.9), 4),
+                        }
+                    )
+    if not rules:
+        return pd.DataFrame()
+    return (
+        pd.DataFrame(rules)
+        .sort_values(["lift", "confidence", "support"], ascending=False)
+        .drop_duplicates(subset=["antecedent", "consequent"])
+        .reset_index(drop=True)
+    )
+
+
+def frequent_items_frame(all_freq):
+    if not all_freq:
+        return pd.DataFrame()
+    return pd.DataFrame(
+        [{"itemset": " + ".join(sorted(items)), "support": supp, "size": len(items)} for items, supp in all_freq.items()]
+    ).sort_values(["support", "size"], ascending=[False, True])
+
+
+def run_apriori(transactions, min_sup=0.1, min_conf=0.4, max_len=3):
+    n = len(transactions)
+    all_items = set(item for transaction in transactions for item in transaction)
+    current = []
+    all_freq = {}
+
+    for item in all_items:
+        itemset = frozenset([item])
+        support = get_support(transactions, itemset, n)
+        if support >= min_sup:
+            all_freq[itemset] = round(support, 4)
+            current.append(itemset)
+
+    for length in range(2, max_len + 1):
+        candidates = set()
+        for left in range(len(current)):
+            for right in range(left + 1, len(current)):
+                union = current[left] | current[right]
+                if len(union) == length:
+                    candidates.add(union)
+        next_level = []
+        for candidate in candidates:
+            support = get_support(transactions, candidate, n)
+            if support >= min_sup:
+                all_freq[candidate] = round(support, 4)
+                next_level.append(candidate)
+        if not next_level:
+            break
+        current = next_level
+
+    return make_rules(all_freq, transactions, min_conf), frequent_items_frame(all_freq), all_freq
+
+
+def run_eclat(transactions, min_sup=0.1, min_conf=0.4, max_len=3):
+    n = len(transactions)
+    min_count = max(1, int(np.ceil(min_sup * n)))
+    tidlists = defaultdict(set)
+    for tid, transaction in enumerate(transactions):
+        for item in transaction:
+            tidlists[frozenset([item])].add(tid)
+
+    current = {itemset: tids for itemset, tids in tidlists.items() if len(tids) >= min_count}
+    all_tidlists = dict(current)
+    all_freq = {itemset: round(len(tids) / n, 4) for itemset, tids in current.items()}
+
+    for length in range(2, max_len + 1):
+        items = list(current.items())
+        next_level = {}
+        for left in range(len(items)):
+            for right in range(left + 1, len(items)):
+                union = items[left][0] | items[right][0]
+                if len(union) == length:
+                    tids = items[left][1] & items[right][1]
+                    if len(tids) >= min_count:
+                        next_level[union] = tids
+        if not next_level:
+            break
+        all_tidlists.update(next_level)
+        all_freq.update({itemset: round(len(tids) / n, 4) for itemset, tids in next_level.items()})
+        current = next_level
+
+    return make_rules(all_freq, transactions, min_conf), frequent_items_frame(all_freq), all_freq
+
+
+class FPNode:
+    def __init__(self, item, count=0, parent=None):
+        self.item = item
+        self.count = count
+        self.parent = parent
+        self.children = {}
+
+
+class FPTree:
+    def __init__(self):
+        self.root = FPNode(None)
+        self.headers = defaultdict(list)
+
+    def insert(self, transaction, count=1):
+        node = self.root
+        for item in transaction:
+            if item not in node.children:
+                node.children[item] = FPNode(item, 0, node)
+                self.headers[item].append(node.children[item])
+            node = node.children[item]
+            node.count += count
+
+    def prefix_paths(self, item):
+        paths = []
+        for node in self.headers[item]:
+            path = []
+            parent = node.parent
+            while parent and parent.item is not None:
+                path.append(parent.item)
+                parent = parent.parent
+            if path:
+                paths.append((list(reversed(path)), node.count))
+        return paths
+
+
+def run_fpgrowth(transactions, min_sup=0.1, min_conf=0.4, max_len=3):
+    n = len(transactions)
+    min_count = max(1, int(np.ceil(min_sup * n)))
+    item_counts = defaultdict(int)
+    for transaction in transactions:
+        for item in transaction:
+            item_counts[item] += 1
+
+    frequent_1 = {item: count for item, count in item_counts.items() if count >= min_count}
+    if not frequent_1:
+        return pd.DataFrame(), pd.DataFrame(), {}
+
+    order = sorted(frequent_1, key=lambda item: (-frequent_1[item], item))
+    rank = {item: idx for idx, item in enumerate(order)}
+    tree = FPTree()
+    for transaction in transactions:
+        filtered = sorted([item for item in transaction if item in frequent_1], key=lambda item: rank[item])
+        if filtered:
+            tree.insert(filtered)
+
+    all_freq = {frozenset([item]): round(count / n, 4) for item, count in frequent_1.items()}
+
+    def mine(base_item, prefix):
+        conditional_counts = defaultdict(int)
+        for path, count in tree.prefix_paths(base_item):
+            for item in path:
+                conditional_counts[item] += count
+        for item, count in conditional_counts.items():
+            if count >= min_count:
+                new_itemset = prefix | frozenset([item])
+                if len(new_itemset) <= max_len:
+                    all_freq[new_itemset] = max(all_freq.get(new_itemset, 0), round(count / n, 4))
+                    if len(new_itemset) < max_len:
+                        mine(item, new_itemset)
+
+    for item in frequent_1:
+        mine(item, frozenset([item]))
+
+    return make_rules(all_freq, transactions, min_conf), frequent_items_frame(all_freq), all_freq
+
+
+@st.cache_data
+def load_mining_data():
+    def read_csv_or_empty(filename):
+        path = ROOT / filename
+        return pd.read_csv(path) if path.exists() else pd.DataFrame()
+
+    return {
+        "Cyclone": read_csv_or_empty("cyclone.csv"),
+        "Heatwave / Coldwave": read_csv_or_empty("heatcold.csv"),
+        "Air Quality Index": read_csv_or_empty("10_air_quality_index_2015_2023.csv"),
+        "Rainfall": read_csv_or_empty("02_monthly_rainfall_district_1901_2023.csv"),
+    }
+
+
+def safe_value(row, column, default=None):
+    return row[column] if column in row and pd.notna(row[column]) else default
+
+
+def build_cyclone_transactions(df):
+    transactions = []
+    for _, row in df.iterrows():
+        month = int(safe_value(row, "month", 0) or 0)
+        items = {
+            f"basin={str(safe_value(row, 'basin', 'Unknown')).replace(' ', '_')}",
+            f"cat={str(safe_value(row, 'category', 'Unknown')).split()[0]}",
+            f"landfall={'Yes' if bool(safe_value(row, 'landfall', False)) else 'No'}",
+            f"season={'PostMonsoon' if month in [10, 11, 12] else ('PreMonsoon' if month in [4, 5, 6] else 'Other')}",
+            f"wind={'High(>150kmh)' if float(safe_value(row, 'max_wind_kmh', 0) or 0) > 150 else 'Low(<=150kmh)'}",
+            f"deaths={'Fatal(>100)' if float(safe_value(row, 'deaths', 0) or 0) > 100 else 'Low(<=100)'}",
+            f"surge={'High(>3m)' if float(safe_value(row, 'surge_m', 0) or 0) > 3 else 'Low(<=3m)'}",
+        }
+        transactions.append(frozenset(items))
+    return transactions
+
+
+def build_heatwave_transactions(df):
+    transactions = []
+    for _, row in df.iterrows():
+        state = str(safe_value(row, "state", "Unknown"))
+        items = {
+            f"type={safe_value(row, 'event_type', 'Unknown')}",
+            f"severity={safe_value(row, 'severity', 'Unknown')}",
+            f"alert={safe_value(row, 'imd_alert', 'Unknown')}",
+            f"duration={'Long(>5d)' if float(safe_value(row, 'duration_days', 0) or 0) > 5 else 'Short(<=5d)'}",
+            f"deaths={'Fatal(>50)' if float(safe_value(row, 'estimated_deaths', 0) or 0) > 50 else 'Low(<=50)'}",
+            f"region={'North' if state in ['Delhi', 'Rajasthan', 'Punjab', 'Haryana', 'UP', 'Uttar Pradesh'] else 'Other'}",
+        }
+        transactions.append(frozenset(items))
+    return transactions
+
+
+def build_aqi_transactions(df, sample_n=5000):
+    sample = df.sample(min(sample_n, len(df)), random_state=42) if len(df) > sample_n else df
+    transactions = []
+    for _, row in sample.iterrows():
+        month = int(safe_value(row, "month", 0) or 0)
+        aqi = float(safe_value(row, "aqi", 0) or 0)
+        items = {
+            f"zone={safe_value(row, 'zone', 'Unknown')}",
+            f"cat={safe_value(row, 'category', 'Unknown')}",
+            f"pollutant={safe_value(row, 'dominant_pollutant', 'Unknown')}",
+            f"season={'Winter' if month in [11, 12, 1, 2] else ('Monsoon' if month in [6, 7, 8, 9] else 'Dry')}",
+            f"pm25={'High(>60)' if float(safe_value(row, 'pm25_ugm3', 0) or 0) > 60 else 'Low(<=60)'}",
+            f"aqi_band={'Severe' if aqi > 300 else ('Poor' if aqi > 200 else 'Moderate_Good')}",
+        }
+        transactions.append(frozenset(items))
+    return transactions
+
+
+def build_rainfall_transactions(df, sample_n=3000):
+    sample = df.sample(min(sample_n, len(df)), random_state=42) if len(df) > sample_n else df
+    transactions = []
+    for _, row in sample.iterrows():
+        month = int(safe_value(row, "month_num", safe_value(row, "month", 0)) or 0)
+        departure = float(safe_value(row, "departure_pct", 0) or 0)
+        zone = str(safe_value(row, "agro_zone", "Unknown")).replace(" ", "_").replace("-", "_")
+        items = {
+            f"zone={zone}",
+            f"cat={safe_value(row, 'category', 'Unknown')}",
+            f"season={'Monsoon' if month in [6, 7, 8, 9] else ('Winter' if month in [11, 12, 1, 2] else 'Dry')}",
+            f"depart={'Excess' if departure > 20 else ('Deficit' if departure < -20 else 'Normal')}",
+            f"rain_level={'Heavy(>150mm)' if float(safe_value(row, 'rainfall_mm', 0) or 0) > 150 else 'Low(<=150mm)'}",
+        }
+        transactions.append(frozenset(items))
+    return transactions
+
+
+def build_transactions(dataset_name, data_map):
+    df = data_map.get(dataset_name, pd.DataFrame())
+    if df.empty:
+        return []
+    if dataset_name == "Cyclone":
+        return build_cyclone_transactions(df)
+    if dataset_name == "Heatwave / Coldwave":
+        return build_heatwave_transactions(df)
+    if dataset_name == "Air Quality Index":
+        return build_aqi_transactions(df)
+    return build_rainfall_transactions(df)
+
+
+@st.cache_data
+def run_mining_cached(dataset_name, algorithm, min_sup, min_conf, max_len, _transactions):
+    start = time.time()
+    if algorithm == "Apriori":
+        rules, freq, _ = run_apriori(_transactions, min_sup, min_conf, max_len)
+    elif algorithm == "ECLAT":
+        rules, freq, _ = run_eclat(_transactions, min_sup, min_conf, max_len)
+    else:
+        rules, freq, _ = run_fpgrowth(_transactions, min_sup, min_conf, max_len)
+    return rules, freq, round(time.time() - start, 3)
+
+
+def render_rules_table(df, max_rows=20):
+    if df.empty:
+        st.warning("No rules found. Lower min support or min confidence to widen the search.")
+        return
+    display = df.head(max_rows).copy()
+    st.dataframe(
+        display[["antecedent", "consequent", "support", "confidence", "lift", "leverage"]],
+        use_container_width=True,
+        hide_index=True,
+    )
+
+
+def render_frequent_items(freq_df, top_n=15):
+    if freq_df.empty:
+        st.info("No frequent itemsets found for the current thresholds.")
+        return
+    for _, row in freq_df.head(top_n).iterrows():
+        pct = min(100, int(row["support"] * 100))
         st.markdown(
-            "**Dataset:** India Extreme Temp Events  \n"
-            "**Period:** 1980 – 2023  \n"
-            "**Records:** 613 events  \n"
-            "**Features:** 13 variables"
+            f"""
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.55rem;">
+                <div style="flex:1;color:{UI["text"]};font-size:0.86rem;">{row["itemset"]}</div>
+                <div style="width:140px;height:10px;border-radius:999px;background:rgba(255,255,255,0.08);overflow:hidden;">
+                    <div style="width:{pct}%;height:100%;background:linear-gradient(90deg,{UI["accent"]},{UI["accent_2"]});"></div>
+                </div>
+                <div style="width:48px;text-align:right;color:{UI["accent"]};font-weight:800;font-size:0.82rem;">{pct}%</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-        st.markdown("---")
-        section = st.radio(
-            "📊 Jump to Section",
-            HEAT_SECTIONS,
-            index=st.session_state.get("section_idx", 0),
-            key="section_heat",
-        )
-        st.session_state["section_idx"] = HEAT_SECTIONS.index(section)
-        st.markdown("---")
-        st.markdown("**Charts:** 15 unique visualisations  \n**Types:** Donut, Line+Area, Polar, Violin+Strip, Bubble Scatter, Heatmap, Horizontal Bar, Grouped Bar, Hexbin, Stacked Bar, KDE+Histogram, Grouped Boxplot, Cross-tab, Pairplot")
 
-    elif dashboard == "🌫️ Air Quality Index Dashboard":
+
+DASHBOARD_OPTIONS = [
+    "Cyclone Analysis",
+    "Heatwave / Coldwave Analysis",
+    "Air Quality Analysis",
+    "Rainfall Analysis",
+    "Association Mining",
+]
+
+DASHBOARD_LABELS = {
+    "Cyclone Analysis": "Cyclone Analysis",
+    "Heatwave / Coldwave Analysis": "Heatwave / Coldwave",
+    "Air Quality Analysis": "Air Quality Index",
+    "Rainfall Analysis": "Rainfall Analysis",
+    "Association Mining": "Association Mining",
+}
+
+SECTION_OPTIONS = {
+    "Cyclone Analysis": [
+        "Overview",
+        "Temporal Patterns",
+        "Intensity Analysis",
+        "Impact & Damage",
+        "Geographic Patterns",
+        "Correlations",
+    ],
+    "Heatwave / Coldwave Analysis": [
+        "Overview",
+        "Temporal Patterns",
+        "Temperature Analysis",
+        "Impact & Deaths",
+        "State-wise Patterns",
+        "Correlations",
+    ],
+    "Air Quality Analysis": [
+        "Overview",
+        "Annual & Seasonal Trends",
+        "Pollutant Analysis",
+        "Station & Geography",
+        "Correlations",
+    ],
+    "Rainfall Analysis": [
+        "Overview",
+        "Annual & Seasonal Trends",
+        "Category & Departure",
+        "State & Zone Patterns",
+        "Correlations",
+    ],
+}
+
+
+def section_label(name: str) -> str:
+    icons = {
+        "Overview": "Overview",
+        "Temporal Patterns": "Temporal Patterns",
+        "Intensity Analysis": "Intensity Analysis",
+        "Impact & Damage": "Impact & Damage",
+        "Geographic Patterns": "Geographic Patterns",
+        "Correlations": "Correlations",
+        "Temperature Analysis": "Temperature Analysis",
+        "Impact & Deaths": "Impact & Deaths",
+        "State-wise Patterns": "State-wise Patterns",
+        "Annual & Seasonal Trends": "Annual & Seasonal Trends",
+        "Pollutant Analysis": "Pollutant Analysis",
+        "Station & Geography": "Station & Geography",
+        "Category & Departure": "Category & Departure",
+        "State & Zone Patterns": "State & Zone Patterns",
+    }
+    return icons.get(name, name)
+
+
+with st.sidebar:
+    st.markdown(
+        """
+        <div style="padding:0.4rem 0 1.1rem 0;">
+            <div style="font-size:0.74rem;text-transform:uppercase;letter-spacing:0;color:rgba(255,255,255,0.55);font-weight:800;">India Weather Extremes</div>
+            <div style="font-size:1.55rem;font-weight:800;line-height:1.1;margin-top:0.45rem;">Climate Risk Dashboard</div>
+            <div style="font-size:0.92rem;color:rgba(255,255,255,0.7);margin-top:0.55rem;line-height:1.7;">
+                One project: EDA dashboards plus association-rule mining.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if st.button("Switch Theme"):
+        st.session_state.theme = "paper" if IS_STORM else "storm"
+        st.rerun()
+
+    st.markdown('<div class="sidebar-step">1. Choose dashboard</div>', unsafe_allow_html=True)
+
+    dataset = st.radio(
+        "Choose dashboard",
+        DASHBOARD_OPTIONS,
+        format_func=lambda value: DASHBOARD_LABELS[value],
+        label_visibility="collapsed",
+        key="dashboard_choice",
+    )
+
+    if st.session_state.get("previous_dashboard") != dataset:
+        st.session_state["previous_dashboard"] = dataset
+        if dataset in SECTION_OPTIONS:
+            st.session_state[f"section_choice_{dataset}"] = "Overview"
+
+    if dataset in SECTION_OPTIONS:
+        st.markdown('<div class="sidebar-step">2. Open section</div>', unsafe_allow_html=True)
+        section = st.radio(
+            "Open section",
+            SECTION_OPTIONS[dataset],
+            format_func=section_label,
+            label_visibility="collapsed",
+            key=f"section_choice_{dataset}",
+        )
+
+    if dataset == "Cyclone Analysis":
         st.markdown(
-            "**Dataset:** India Air Quality Index  \n"
-            "**Period:** 2015 – 2023  \n"
-            "**Records:** 32,870 readings  \n"
-            "**Features:** 15 variables"
+            """
+            <div style="margin-top:1rem;padding:0.95rem;border-radius:18px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);">
+                <div style="font-size:0.74rem;text-transform:uppercase;letter-spacing:0;color:rgba(255,255,255,0.58);font-weight:800;">Dataset Snapshot</div>
+                <div style="margin-top:0.55rem;line-height:1.8;font-size:0.9rem;">
+                    103 cyclone events<br>
+                    1990 to 2023<br>
+                    15 chart outputs
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-        st.markdown("---")
-        section = st.radio(
-            "📊 Jump to Section",
-            AQI_SECTIONS,
-            index=st.session_state.get("section_idx", 0),
-            key="section_aqi",
-        )
-        st.session_state["section_idx"] = AQI_SECTIONS.index(section)
-        st.markdown("---")
-        st.markdown("**Charts:** 12 unique visualisations  \n**Types:** Donut, Line+Area, Polar, Violin+Strip, Bubble Scatter, Heatmap, Horizontal Bar, Stacked Bar, Cross-tab, Grouped Boxplot, KDE+Histogram, Correlation Matrix")
-
-    else:  # Rainfall
+    elif dataset == "Heatwave / Coldwave Analysis":
         st.markdown(
-            "**Dataset:** India Monthly Rainfall  \n"
-            "**Period:** 1901 – 2023  \n"
-            "**Records:** 44,280 readings  \n"
-            "**Features:** 12 variables"
+            """
+            <div style="margin-top:1rem;padding:0.95rem;border-radius:18px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);">
+                <div style="font-size:0.74rem;text-transform:uppercase;letter-spacing:0;color:rgba(255,255,255,0.58);font-weight:800;">Dataset Snapshot</div>
+                <div style="margin-top:0.55rem;line-height:1.8;font-size:0.9rem;">
+                    613 temperature events<br>
+                    1980 to 2023<br>
+                    15 chart outputs
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-        st.markdown("---")
-        section = st.radio(
-            "📊 Jump to Section",
-            RAINFALL_SECTIONS,
-            index=st.session_state.get("section_idx", 0),
-            key="section_rainfall",
+    elif dataset == "Air Quality Analysis":
+        st.markdown(
+            """
+            <div style="margin-top:1rem;padding:0.95rem;border-radius:18px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);">
+                <div style="font-size:0.74rem;text-transform:uppercase;letter-spacing:0;color:rgba(255,255,255,0.58);font-weight:800;">Dataset Snapshot</div>
+                <div style="margin-top:0.55rem;line-height:1.8;font-size:0.9rem;">
+                    AQI readings<br>
+                    2015 to 2023<br>
+                    12 chart outputs
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-        st.session_state["section_idx"] = RAINFALL_SECTIONS.index(section)
-        st.markdown("---")
-        st.markdown("**Charts:** 15 unique visualisations  \n**Types:** Donut, Line+Area, Polar, Violin+Strip, Bubble Scatter, Heatmap, Horizontal Bar, Stacked Bar, Cross-tab, Grouped Boxplot, KDE+Histogram, Grouped Bar, Hexbin, Correlation Matrix, Pairplot")
+    elif dataset == "Rainfall Analysis":
+        st.markdown(
+            """
+            <div style="margin-top:1rem;padding:0.95rem;border-radius:18px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);">
+                <div style="font-size:0.74rem;text-transform:uppercase;letter-spacing:0;color:rgba(255,255,255,0.58);font-weight:800;">Dataset Snapshot</div>
+                <div style="margin-top:0.55rem;line-height:1.8;font-size:0.9rem;">
+                    Monthly district rainfall<br>
+                    1901 to 2023<br>
+                    15 chart outputs
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown('<div class="sidebar-step">2. Select mining data</div>', unsafe_allow_html=True)
+        mining_dataset = st.radio(
+            "Mining Dataset",
+            ["Cyclone", "Heatwave / Coldwave", "Air Quality Index", "Rainfall"],
+            label_visibility="collapsed",
+        )
+        st.markdown('<div class="sidebar-step">3. Tune thresholds</div>', unsafe_allow_html=True)
+        min_sup = st.slider("Min Support", 0.05, 0.50, 0.10, 0.01)
+        min_conf = st.slider("Min Confidence", 0.20, 0.95, 0.40, 0.05)
+        max_len = st.slider("Max Itemset Length", 2, 4, 3, 1)
+        st.markdown('<div class="sidebar-step">4. Run algorithm</div>', unsafe_allow_html=True)
+        mining_algorithm = st.radio(
+            "Algorithm",
+            ["Apriori", "ECLAT", "FP-Growth", "Compare All Three"],
+            label_visibility="collapsed",
+        )
+        st.markdown(
+            """
+            <div style="margin-top:1rem;padding:0.95rem;border-radius:18px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);font-size:0.88rem;line-height:1.7;">
+                Apriori uses candidate pruning.<br>
+                ECLAT uses vertical TID lists.<br>
+                FP-Growth uses a compact prefix tree.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
+if dataset == "Cyclone Analysis":
+    render_hero(
+        "Cyclone Risk Intelligence",
+        "A focused view of Indian Ocean cyclone behavior across time, intensity, geography, and impact. The layout is structured for presentation: quick metrics first, then visual evidence section by section.",
+        ["1990-2023", "103 cyclone records", "Bay of Bengal + Arabian Sea", "15 visual outputs"],
+        UI["hero_cyclone"],
+    )
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# CYCLONE DASHBOARD
-# ═══════════════════════════════════════════════════════════════════════════════
-if dashboard == "🌀 Cyclone Dashboard":
+    total_deaths = int(cyc["deaths"].sum()) if "deaths" in cyc else 0
+    max_wind = cyc["max_wind_kmh"].max() if "max_wind_kmh" in cyc else 0
+    total_damage = int(cyc["damage_crore_inr"].sum()) if "damage_crore_inr" in cyc else 0
+    landfall_rate = round(cyc["landfall"].sum() / len(cyc) * 100, 1) if len(cyc) and "landfall" in cyc else 0
+    super_count = int((cyc["category"] == "Super Cyclonic Storm").sum()) if "category" in cyc else 0
 
-    st.markdown("""
-    <div class="hero hero-cyclone">
-      <h1>🌀 Indian Ocean Cyclone EDA</h1>
-      <p>Exploratory Data Analysis — Extreme Pattern Discovery across 103 cyclone events (1990–2023)</p>
-      <span class="tag tag-cyclone">1990–2023</span>
-      <span class="tag tag-cyclone">Bay of Bengal</span>
-      <span class="tag tag-cyclone">Arabian Sea</span>
-      <span class="tag tag-cyclone">15 Charts</span>
-      <span class="tag tag-cyclone">Matplotlib · Seaborn</span>
-    </div>
-    """, unsafe_allow_html=True)
+    cols = st.columns(5)
+    with cols[0]:
+        stat_card(len(cyc), "Total Cyclones", UI["cyclone"])
+    with cols[1]:
+        stat_card(f"{total_deaths:,}", "Deaths", UI["danger"])
+    with cols[2]:
+        stat_card(max_wind, "Max Wind km/h", UI["accent"])
+    with cols[3]:
+        stat_card(f"₹{total_damage:,}", "Damage Crore", UI["cyclone"])
+    with cols[4]:
+        stat_card(f"{landfall_rate}% | {super_count}", "Landfall | Super", UI["accent_2"])
 
-    st.markdown(f"""
-    <div class="kpi-grid">
-      <div class="kpi-card kpi-card-cyclone"><div class="kpi-val-cyclone">{fmt(total_cyclones)}</div><div class="kpi-lbl">Total Cyclones</div></div>
-      <div class="kpi-card kpi-card-cyclone"><div class="kpi-val-cyclone">{fmt(total_deaths_c)}</div><div class="kpi-lbl">Total Deaths</div></div>
-      <div class="kpi-card kpi-card-cyclone"><div class="kpi-val-cyclone">{fmt(max_wind)}</div><div class="kpi-lbl">Max Wind (km/h)</div></div>
-      <div class="kpi-card kpi-card-cyclone"><div class="kpi-val-cyclone">{fmt(total_damage, '₹', ' Cr')}</div><div class="kpi-lbl">Total Damage</div></div>
-      <div class="kpi-card kpi-card-cyclone"><div class="kpi-val-cyclone">{fmt(landfall_pct, suffix='%')}</div><div class="kpi-lbl">Landfall Rate</div></div>
-      <div class="kpi-card kpi-card-cyclone"><div class="kpi-val-cyclone">{fmt(super_cyclones)}</div><div class="kpi-lbl">Super Cyclones</div></div>
-    </div>
-    """, unsafe_allow_html=True)
+    if section == "Overview":
+        section_heading("Cyclone Analysis", "Category distribution and baseline project context")
+        show_chart(
+            "Cyclone Category Distribution",
+            "Count Plot",
+            "This is the baseline read on the dataset: which intensity classes dominate the record, and whether the distribution is skewed toward more dangerous storm types.",
+            "01_category_distribution.png",
+        )
+        insight("The category mix already tells a story: upper-end cyclone classes occupy a large share of the dataset, which makes this project feel closer to risk analysis than simple weather summarization.")
 
-    if section == "📋 Overview & KPIs":
-        st.markdown('<div class="section-header-cyclone">📋 Category Distribution</div>', unsafe_allow_html=True)
-        show_chart("chart-card","Cyclone Category Distribution","badge-dist","Count Plot",
-            "Shows how cyclones are distributed across intensity categories from Depression to Super Cyclonic Storm. <b>Extremely Severe</b> storms dominate, revealing a worrying skew toward high-intensity events — a critical signal for disaster preparedness and policy planning.",
-            "CHARTS/01_category_distribution.png")
-        st.markdown("""<div class="insight-cyclone">
-            💡 <strong>Key Insight:</strong> "Extremely Severe Cyclonic Storm" is the most frequent category (19 events),
-            followed closely by regular Cyclonic Storms (18). Super Cyclonic Storms account for 15 events — more than
-            Severe Cyclonic Storms — indicating increasing upper-end intensity in recent decades.
-        </div>""", unsafe_allow_html=True)
-
-    elif section == "📅 Temporal Patterns":
-        st.markdown('<div class="section-header-cyclone">📅 Temporal Patterns</div>', unsafe_allow_html=True)
-        col1, col2 = st.columns([3, 2])
+    elif section == "Temporal Patterns":
+        section_heading("Cyclone Analysis", "When cyclones cluster across years and seasons")
+        col1, col2 = st.columns([1.45, 1], gap="large")
         with col1:
-            show_chart("chart-card","Annual Cyclone Frequency (1990–2023)","badge-trend","Line + Area Chart",
-                "Tracks how cyclone activity has evolved year-on-year. The shaded area highlights cumulative intensity of activity while peak years are annotated directly on the chart for instant spotting of anomalous or record-breaking seasons.",
-                "CHARTS/02_yearly_frequency.png")
+            show_chart(
+                "Annual Cyclone Frequency",
+                "Line + Area",
+                "Use this as the big-picture temporal trend chart. It surfaces active years quickly and gives the dashboard a strong narrative anchor.",
+                "02_yearly_frequency.png",
+            )
         with col2:
-            show_chart("chart-card","Monthly Seasonality (Polar)","badge-trend","Polar Bar Chart",
-                "A polar chart maps cyclone frequency to the 12-month calendar wheel — immediately revealing the bimodal seasonality: pre-monsoon (May) and post-monsoon (Oct–Nov) are the dominant windows for cyclogenesis in the Indian Ocean.",
-                "CHARTS/03_monthly_polar.png")
-        show_chart("chart-card","Year × Month Activity Heatmap","badge-corr","Heatmap",
-            "A 2D grid where every cell shows how many cyclones occurred in a given year and month. Hot colours (red/orange) expose multi-cyclone months — years like 2007 and 2015 stand out as unusually active, while certain months are almost always quiet.",
-            "CHARTS/06_heatmap_year_month.png")
-        st.markdown("""<div class="insight-cyclone">
-            💡 <strong>Temporal Insight:</strong> October & November account for nearly <strong>40%</strong> of all cyclone events.
-            The post-monsoon season is consistently the most dangerous window. Year-on-year, the 2010s decade saw
-            the most clustered high-activity years, suggesting potential climate-driven intensification.
-        </div>""", unsafe_allow_html=True)
+            show_chart(
+                "Monthly Seasonality",
+                "Polar Chart",
+                "The radial presentation works well here because seasonality is cyclical. It makes the peak cyclone months feel immediate instead of tucked inside a bar chart.",
+                "03_monthly_polar.png",
+            )
+        show_chart(
+            "Year by Month Activity Heatmap",
+            "Heatmap",
+            "This chart pinpoints exactly where dense activity clusters appear across the historical timeline and helps connect anomalous years to specific months.",
+            "06_heatmap_year_month.png",
+        )
+        insight("This section now reads more cleanly as a sequence: annual trend, seasonal rhythm, then high-resolution year-month concentration.")
 
-    elif section == "💨 Intensity Analysis":
-        st.markdown('<div class="section-header-cyclone">💨 Intensity Analysis</div>', unsafe_allow_html=True)
-        show_chart("chart-card","Wind Speed Distribution by Category (Violin + Strip)","badge-dist","Violin Plot",
-            "Violin plots show the full probability density of wind speeds within each category, while white strip dots reveal individual cyclone data points. The thicker the violin at a value, the more cyclones cluster there — exposing overlaps and outliers between adjacent intensity classes.",
-            "CHARTS/04_wind_violin.png")
-        col1, col2 = st.columns(2)
+    elif section == "Intensity Analysis":
+        section_heading("Cyclone Analysis", "How storm intensity behaves across variables")
+        show_chart(
+            "Wind Speed Distribution by Category",
+            "Violin + Strip",
+            "This view gives the clearest distributional feel for wind speed by category. It is one of the most valuable charts in the whole cyclone module.",
+            "04_wind_violin.png",
+        )
+        col1, col2 = st.columns(2, gap="large")
         with col1:
-            show_chart("chart-card","Wind Speed vs Pressure (Regression)","badge-corr","Scatter + Regression",
-                "The classic inverse relationship between central pressure and wind speed. Lower pressure = higher winds. Annotated outliers highlight the most intense recorded storms with unprecedented low-pressure readings.",
-                "CHARTS/10_wind_pressure_scatter.png")
+            show_chart(
+                "Wind Speed vs Pressure",
+                "Scatter + Regression",
+                "A clean relationship chart that helps the audience immediately understand how stronger storms align with lower pressure systems.",
+                "10_wind_pressure_scatter.png",
+            )
         with col2:
-            show_chart("chart-card","Duration vs Track Length (Hexbin)","badge-dist","Hexbin Density",
-                "Hexbin bins show where the most cyclones cluster in duration–track space. Long-lived storms that travel far are rare but extremely destructive — the sparse hot cells at the extreme corners are the most dangerous events.",
-                "CHARTS/13_duration_track_hexbin.png")
-        st.markdown("""<div class="insight-cyclone">
-            💡 <strong>Intensity Insight:</strong> Wind speed and minimum pressure have a near-perfect
-            <strong>negative correlation (≈ −0.97)</strong>. Super Cyclonic Storms cluster around pressures below 920 hPa
-            and winds exceeding 220 km/h — well beyond the threshold where standard infrastructure fails.
-        </div>""", unsafe_allow_html=True)
+            show_chart(
+                "Duration vs Track Length",
+                "Hexbin Density",
+                "This adds movement behavior into the intensity conversation and broadens the analysis beyond a single wind-speed dimension.",
+                "13_duration_track_hexbin.png",
+            )
+        insight("The intensity section now feels less cramped and more analytical: one distribution chart followed by two relationship charts.")
 
-    elif section == "🌊 Impact & Damage":
-        st.markdown('<div class="section-header-cyclone">🌊 Impact & Damage Analysis</div>', unsafe_allow_html=True)
-        show_chart("chart-card","Deaths vs Economic Damage — Bubble Chart (Log Scale)","badge-impact","Bubble Scatter",
-            "Plots every cyclone at the intersection of human cost (deaths) and economic damage, with bubble size encoding wind speed and colour showing category. Log scale prevents a handful of mega-disasters from collapsing all other data — enabling pattern detection across the full severity spectrum.",
-            "CHARTS/05_deaths_damage_scatter.png")
-        col1, col2 = st.columns(2)
+    elif section == "Impact & Damage":
+        section_heading("Cyclone Analysis", "Human and economic cost")
+        show_chart(
+            "Deaths vs Economic Damage",
+            "Bubble Scatter",
+            "This works as the anchor chart for impact because it combines human cost, financial cost, and severity in one visual frame.",
+            "05_deaths_damage_scatter.png",
+        )
+        col1, col2 = st.columns(2, gap="large")
         with col1:
-            show_chart("chart-card","Top 10 Deadliest Cyclones","badge-impact","Horizontal Bar",
-                "Ranks the 10 most lethal cyclones with death toll and year. Colour gradient (light → dark red) visually reinforces magnitude. The catastrophic gap between the top event and the rest is immediately visible.",
-                "CHARTS/08_top10_deadliest.png")
+            show_chart(
+                "Top 10 Deadliest Cyclones",
+                "Ranked Bar",
+                "A straightforward ranking view is useful here because it highlights historical outliers immediately and supports presentation-style storytelling.",
+                "08_top10_deadliest.png",
+            )
         with col2:
-            show_chart("chart-card","Storm Surge Distribution (KDE + Histogram)","badge-dist","KDE Histogram",
-                "Overlays a histogram with a kernel density curve to reveal the surge distribution shape. The 95th percentile marker highlights the extreme tail — surges above this level cause catastrophic coastal inundation and are the primary driver of mass casualties.",
-                "CHARTS/12_surge_kde.png")
-        show_chart("chart-card","Decade-wise Economic Damage (Boxplot)","badge-trend","Box + Strip Plot",
-            "Compares damage distributions across four decades. The box shows the interquartile range, the horizontal line is the median, and diamond-shaped outliers are extreme economic disaster events. The rising medians decade over decade tell a stark story about escalating costs.",
-            "CHARTS/14_decade_damage_box.png")
-        st.markdown("""<div class="insight-cyclone">
-            💡 <strong>Impact Insight:</strong> Economic damage in the 2010s is <strong>3× the median</strong> of the 1990s,
-            even inflation-adjusted. Storm surge above 4m is the <strong>single strongest predictor</strong> of both deaths
-            and damage — targeted coastal early-warning systems could dramatically cut casualties.
-        </div>""", unsafe_allow_html=True)
+            show_chart(
+                "Storm Surge Distribution",
+                "Histogram + KDE",
+                "This gives a good explanatory layer for why some cyclone events become so destructive and rounds out the impact section.",
+                "12_surge_kde.png",
+            )
+        show_chart(
+            "Decade-wise Economic Damage",
+            "Box Plot",
+            "This chart adds longer-term structure to the impact section and helps frame escalation in exposure over time.",
+            "14_decade_damage_box.png",
+        )
+        insight("The impact page now has a more executive-dashboard rhythm: summary relationship, ranked outliers, mechanism view, and decade trend.")
 
-    elif section == "🗺️ Geographic Patterns":
-        st.markdown('<div class="section-header-cyclone">🗺️ Geographic Patterns</div>', unsafe_allow_html=True)
-        col1, col2 = st.columns(2)
+    elif section == "Geographic Patterns":
+        section_heading("Cyclone Analysis", "Where basin and landfall risk are concentrated")
+        col1, col2 = st.columns(2, gap="large")
         with col1:
-            show_chart("chart-card","Landfall Distribution by State (Donut)","badge-geo","Donut Chart",
-                "A donut chart shows each state's share of total landfall events. The hollow centre displays the total count. States with larger slices bear a disproportionate risk burden and require more robust cyclone infrastructure investment.",
-                "CHARTS/11_landfall_donut.png")
+            show_chart(
+                "Landfall Distribution by State",
+                "Donut",
+                "A quick geographic allocation view showing which coastal states repeatedly absorb cyclone landfall risk.",
+                "11_landfall_donut.png",
+            )
         with col2:
-            show_chart("chart-card","Category Split by Basin (Stacked Bar)","badge-geo","Stacked Bar",
-                "Compares how cyclone intensity categories are distributed between the Bay of Bengal and the Arabian Sea. The stacking reveals whether one basin disproportionately produces extreme storms — a key insight for regional hazard risk modelling.",
-                "CHARTS/07_basin_category_stacked.png")
-        st.markdown("""<div class="insight-cyclone">
-            💡 <strong>Geographic Insight:</strong> Karnataka, West Bengal, Andhra Pradesh, Gujarat and Maharashtra
-            each receive <strong>~21% of landfalls</strong> — surprisingly balanced. However, the Bay of Bengal produces
-            significantly more <strong>Super Cyclonic Storms</strong> than the Arabian Sea, making its coastlines
-            higher-risk for catastrophic events.
-        </div>""", unsafe_allow_html=True)
+            show_chart(
+                "Category Split by Basin",
+                "Stacked Bar",
+                "This is the important comparison chart for basin behavior and helps separate Bay of Bengal risk from Arabian Sea behavior.",
+                "07_basin_category_stacked.png",
+            )
+        insight("Putting state exposure and basin composition side by side makes this module feel more like a decision dashboard than a notebook chapter.")
 
-    elif section == "🔗 Correlations":
-        st.markdown('<div class="section-header-cyclone">🔗 Correlation & Multivariate Analysis</div>', unsafe_allow_html=True)
-        show_chart("chart-card","Correlation Matrix — All Numerical Features","badge-corr","Heatmap",
-            "A triangular correlation matrix covering all 10 numerical variables. Red cells show strong positive correlations, blue cells show negative ones. This is the key chart for understanding which variables move together — guiding feature selection for predictive modelling.",
-            "CHARTS/09_correlation_heatmap.png")
-        show_chart("chart-card","Pairplot — Extreme Cyclone Indicators (Basin Hue)","badge-corr","Pairplot",
-            "Every variable is plotted against every other variable in a grid. Diagonal cells show KDE distributions for each basin. This single chart encodes dozens of bivariate relationships simultaneously — pink = Bay of Bengal, green = Arabian Sea — revealing basin-specific clustering.",
-            "CHARTS/15_pairplot.png")
-        st.markdown("""<div class="insight-cyclone">
-            💡 <strong>Correlation Insight:</strong> <strong>Affected districts</strong> and <strong>evacuated population</strong>
-            show the strongest positive correlation (0.89), confirming evacuation scales proportionally with exposure.
-            Surprisingly, <strong>IMD warning lead time</strong> has only a weak negative correlation with deaths —
-            suggesting warning effectiveness depends more on communication quality than lead time alone.
-        </div>""", unsafe_allow_html=True)
+    elif section == "Correlations":
+        section_heading("Cyclone Analysis", "Feature relationships and multivariate patterns")
+        show_chart(
+            "Correlation Matrix",
+            "Heatmap",
+            "A compact view of the strongest numerical relationships in the cyclone dataset and a good bridge toward any later predictive modeling work.",
+            "09_correlation_heatmap.png",
+        )
+        show_chart(
+            "Pairplot of Extreme Cyclone Indicators",
+            "Pairplot",
+            "This provides the fuller multivariate look and is especially useful for spotting basin-level clustering or variable separation.",
+            "15_pairplot.png",
+        )
+        insight("This last section stays intentionally simple so the dashboard ends with analysis depth instead of visual clutter.")
 
+elif dataset == "Heatwave / Coldwave Analysis":
+    hw = hw_df[hw_df["event_type"] == "Heatwave"] if "event_type" in hw_df else pd.DataFrame()
+    cw = hw_df[hw_df["event_type"] == "Coldwave"] if "event_type" in hw_df else pd.DataFrame()
+    max_heat = hw["peak_temp_c"].max() if not hw.empty and "peak_temp_c" in hw else 0
+    min_cold = cw["peak_temp_c"].min() if not cw.empty and "peak_temp_c" in cw else 0
+    total_deaths = int(hw_df["estimated_deaths"].sum()) if "estimated_deaths" in hw_df else 0
+    severe_events = int((hw_df["severity"] == "Severe").sum()) if "severity" in hw_df else 0
+    red_alerts = int((hw_df["imd_alert"] == "Red").sum()) if "imd_alert" in hw_df else 0
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# HEATWAVE & COLDWAVE DASHBOARD
-# ═══════════════════════════════════════════════════════════════════════════════
-elif dashboard == "🌡️ Heatwave & Coldwave Dashboard":
+    render_hero(
+        "Heatwave and Coldwave Extremes",
+        "A second analysis module focused on temperature-driven hazards across India. The page is structured to feel like part of the same project, with its own identity but the same dashboard system.",
+        ["1980-2023", "613 events", "Heat + cold extremes", "15 visual outputs"],
+        UI["hero_heat"],
+    )
 
-    st.markdown("""
-    <div class="hero hero-heatwave">
-      <h1>🌡️ Heatwave & Coldwave EDA</h1>
-      <p>Exploratory Data Analysis — Extreme Temperature Pattern Discovery across 613 events (1980–2023)</p>
-      <span class="tag tag-heat">1980–2023</span>
-      <span class="tag tag-heat">Heatwaves</span>
-      <span class="tag tag-cold">Coldwaves</span>
-      <span class="tag tag-heat">15 Charts</span>
-      <span class="tag tag-heat">Matplotlib · Seaborn</span>
-    </div>
-    """, unsafe_allow_html=True)
+    cols = st.columns(5)
+    with cols[0]:
+        stat_card(len(hw_df), "Total Events", UI["heat"])
+    with cols[1]:
+        stat_card(f"{len(hw)} | {len(cw)}", "Heat | Cold", UI["cold"])
+    with cols[2]:
+        stat_card(f"{total_deaths:,}", "Deaths", UI["danger"])
+    with cols[3]:
+        stat_card(f"{max_heat}°C | {min_cold}°C", "Max Heat | Min Cold", UI["heat"])
+    with cols[4]:
+        stat_card(f"{severe_events} | {red_alerts}", "Severe | Red Alerts", UI["accent_2"])
 
-    st.markdown(f"""
-    <div class="kpi-grid">
-      <div class="kpi-card kpi-card-heat"><div class="kpi-val-heat">{fmt(total_events)}</div><div class="kpi-lbl">Total Events</div></div>
-      <div class="kpi-card kpi-card-heat"><div class="kpi-val-heat">{fmt(n_heatwaves)}</div><div class="kpi-lbl">Heatwaves</div></div>
-      <div class="kpi-card kpi-card-heat"><div class="kpi-val-cold">{fmt(n_coldwaves)}</div><div class="kpi-lbl">Coldwaves</div></div>
-      <div class="kpi-card kpi-card-heat"><div class="kpi-val-heat">{fmt(total_deaths_h)}</div><div class="kpi-lbl">Total Deaths</div></div>
-      <div class="kpi-card kpi-card-heat"><div class="kpi-val-heat">{fmt(max_temp)}°C</div><div class="kpi-lbl">Peak Temp Recorded</div></div>
-      <div class="kpi-card kpi-card-heat"><div class="kpi-val-heat">{fmt(states_affected)}</div><div class="kpi-lbl">States Affected</div></div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    if section == "📋 Event Overview & KPIs":
-        st.markdown('<div class="section-header-heat">📋 Heatwave vs Coldwave — Event Split</div>', unsafe_allow_html=True)
-        show_chart("chart-card-heat","Chart 1 · Heatwave vs Coldwave — Donut Chart","badge-heat","Donut Chart",
-            "Overall proportion of heatwaves (pink) vs coldwaves (blue) across the full 44-year record. The hollow centre displays total event count — an instant baseline before deeper analysis. The ratio is shifting: heatwave frequency has risen steeply since 2000, a direct fingerprint of long-term warming.",
-            "CHARTS/01_event_type_donut.png","📂 Chart not found: CHARTS/01_event_type_donut.png — run heatwave_eda notebook first.")
-        st.markdown("""<div class="insight-heat">
-            💡 <strong>Key Insight:</strong> Heatwaves make up the majority of events yet both types carry
-            severe mortality risk across different seasons. Heatwave counts are accelerating post-2000 while
-            coldwaves have plateaued — a direct signal of India's warming trajectory over 44 years.
-        </div>""", unsafe_allow_html=True)
-
-    elif section == "📅 Annual & Seasonal Trends":
-        st.markdown('<div class="section-header-heat">📅 Annual & Seasonal Trends (Charts 2, 3, 6)</div>', unsafe_allow_html=True)
-        col1, col2 = st.columns([3, 2])
+    if section == "Overview":
+        section_heading("Temperature Extremes", "Event mix and warning alignment")
+        col1, col2 = st.columns([1, 1.45], gap="large")
         with col1:
-            show_chart("chart-card-heat","Chart 2 · Annual Frequency — Dual Line + Area (1980–2023)","badge-trend","Line + Area Chart",
-                "Heatwave (pink) and coldwave (blue) event counts tracked year-on-year with shaded fills. Diverging trends between the two series are a direct climate-change signal — heatwaves climbing while coldwaves remain flat or decline over four decades.",
-                "CHARTS/02_yearly_frequency.png")
+            show_chart(
+                "Heatwave vs Coldwave Split",
+                "Donut",
+                "A quick project-level orientation chart showing the balance between the two event types in the dataset.",
+                "01_event_type_donut.png",
+            )
         with col2:
-            show_chart("chart-card-heat","Chart 3 · Monthly Seasonality — Dual Polar Bar","badge-heat","Polar Bar Chart",
-                "12 months mapped onto a polar wheel with side-by-side bars per event type. The near-opposite positioning of pink (Mar–Jun) vs blue (Dec–Feb) encodes India's entire temperature seasonality in a single striking chart.",
-                "CHARTS/03_monthly_polar.png")
-        show_chart("chart-card-heat","Chart 6 · Year × Month Event Frequency Heatmap","badge-corr","2D Heatmap",
-            "Every cell shows the number of extreme temperature events in a given year–month pair. The bright March–June band for heatwaves and December–February band for coldwaves are clearly visible year after year — certain years like 2015 and 2022 show exceptionally dense clusters.",
-            "CHARTS/06_heatmap_year_month.png")
-        st.markdown("""<div class="insight-heat">
-            💡 <strong>Temporal Insight:</strong> Heatwaves peak in <strong>May–June</strong>; coldwaves dominate
-            <strong>December–January</strong>. The 2010s saw the most concentrated heatwave clusters —
-            multiple years recording 5+ events vs. fewer than 2 per year in the 1980s.
-        </div>""", unsafe_allow_html=True)
+            show_chart(
+                "Severity vs IMD Alert Cross-tabulation",
+                "Heatmap",
+                "A useful operational chart that compares issued alert level with observed event severity and helps the analysis feel grounded in warning systems.",
+                "09_severity_alert_heatmap.png",
+            )
+        insight("This overview page now acts like a proper module landing page: event composition on one side and alert-system framing on the other.")
 
-    elif section == "🌡️ Temperature & Severity":
-        st.markdown('<div class="section-header-heat">🌡️ Severity & Intensity Analysis (Charts 4, 9, 10, 11)</div>', unsafe_allow_html=True)
-        show_chart("chart-card-heat","Chart 4 · Peak Temperature by Severity — Side-by-side Violin + Strip","badge-dist","Violin + Strip Plot",
-            "Violin width = event density at each temperature; white dots = individual events. Heatwave Severe class easily exceeds 45°C while Coldwave Severe drops below 5°C — the dangerous overlap between Moderate and Severe heatwaves is exposed clearly.",
-            "CHARTS/04_temp_violin.png")
-        col1, col2 = st.columns(2)
+    elif section == "Temporal Patterns":
+        section_heading("Temperature Extremes", "Long-run timing and seasonality")
+        show_chart(
+            "Annual Heatwave and Coldwave Frequency",
+            "Dual Line + Area",
+            "The annual trend chart is the natural lead visual here because it establishes the broader climate signal before drilling into seasonality.",
+            "02_yearly_frequency.png",
+        )
+        col1, col2 = st.columns([1.45, 1], gap="large")
         with col1:
-            show_chart("chart-card-heat","Chart 9 · Severity vs IMD Alert Level — Cross-tab Heatmap","badge-corr","Cross-tab Heatmap",
-                "Maps IMD alert levels (Yellow/Orange/Red) against actual severity class. Misaligned cells — Severe events with only Yellow alerts, or Red alerts for Mild events — reveal real calibration gaps in India's national weather warning system.",
-                "CHARTS/09_severity_alert_heatmap.png")
+            show_chart(
+                "Year by Month Activity Heatmap",
+                "Heatmap",
+                "This chart shows the seasonal bands across decades and makes it easy to spot active windows and anomalous years.",
+                "06_heatmap_year_month.png",
+            )
         with col2:
-            show_chart("chart-card-heat","Chart 10 · Temperature Anomaly by Severity — Grouped Boxplot","badge-heat","Grouped Boxplot",
-                "Grouped boxes show how far temperatures deviated from historical norms per severity class. The dashed zero line divides positive (heat) from negative (cold) anomalies — Severe heatwaves sit at +6°C to +10°C above the norm.",
-                "CHARTS/10_anomaly_severity_box.png")
-        show_chart("chart-card-heat","Chart 11 · Event Duration Distribution — Overlapping KDE + Histogram","badge-dist","KDE + Histogram",
-            "Overlapping histograms and KDE curves for both event types with annotated mean lines. A longer right tail means more chronic multi-week events — these accumulate far greater physiological and economic damage than short-duration spikes of equal peak intensity.",
-            "CHARTS/11_duration_kde.png")
-        st.markdown("""<div class="insight-heat">
-            💡 <strong>Severity Insight:</strong> Severe heatwaves record anomalies of <strong>+6°C to +10°C</strong>
-            above historical norms. IMD Red alerts are under-issued for Moderate events — a calibration gap
-            that directly raises mortality risk. Heatwaves also run significantly longer on average than coldwaves.
-        </div>""", unsafe_allow_html=True)
+            show_chart(
+                "Monthly Seasonality",
+                "Polar Chart",
+                "The polar layout makes the opposing seasonality of heatwaves and coldwaves much more visually memorable.",
+                "03_monthly_polar.png",
+            )
+        insight("The ordering here helps the reader move from macro trend to seasonal distribution to the exact year-month structure.")
 
-    elif section == "💀 Deaths & Mortality Impact":
-        st.markdown('<div class="section-header-heat">💀 Deaths & Mortality Impact (Charts 5, 7, 12, 13)</div>', unsafe_allow_html=True)
-        show_chart("chart-card-heat","Chart 5 · Deaths vs Temperature Anomaly — Bubble Scatter","badge-impact","Bubble Scatter",
-            "Each bubble = one event, positioned at the intersection of temperature deviation and death toll. Bubble size encodes event duration in days. Annotated outliers are the 4 most lethal events in 44 years. Right half (positive anomaly) = heatwaves; left half = coldwaves.",
-            "CHARTS/05_deaths_anomaly_scatter.png")
-        col1, col2 = st.columns(2)
+    elif section == "Temperature Analysis":
+        section_heading("Temperature Extremes", "Severity, anomalies, and duration")
+        show_chart(
+            "Peak Temperature Distribution by Severity",
+            "Violin + Strip",
+            "A strong distributional chart that shows how severe events sit relative to the broader event population for both heatwaves and coldwaves.",
+            "04_temp_violin.png",
+        )
+        col1, col2 = st.columns(2, gap="large")
         with col1:
-            show_chart("chart-card-heat","Chart 7 · Top 10 Deadliest Events (1980–2023)","badge-impact","Horizontal Bar Chart",
-                "Pink = heatwave, blue = coldwave. Annotated with death count, year, and state. Reveals which type has historically dominated mortality and which single events were catastrophic outliers far above the rest of the distribution.",
-                "CHARTS/07_top10_deadliest.png")
+            show_chart(
+                "Temperature Anomaly by Severity and Event Type",
+                "Box Plot",
+                "This chart adds interpretation beyond absolute temperature by focusing on deviation from normal conditions.",
+                "10_anomaly_severity_box.png",
+            )
         with col2:
-            show_chart("chart-card-heat","Chart 12 · Decade-wise Total Deaths — Grouped Bar","badge-trend","Grouped Bar Chart",
-                "Side-by-side decade bars compare total mortality from heatwaves vs coldwaves. Totals float above each bar. A widening gap across decades reveals the long-term shift in which extreme temperature type poses the greater mortality risk to India.",
-                "CHARTS/12_decade_deaths_bar.png")
-        show_chart("chart-card-heat","Chart 13 · Districts Affected vs Deaths — Hexbin Density","badge-dist","Hexbin Density Plot",
-            "Hexagonal bins show where the majority of events cluster in districts-vs-deaths space. The dense core near low values is the 'typical' event; rare bright cells in the upper-right are catastrophic multi-district events that overwhelm state emergency response systems.",
-            "CHARTS/13_districts_deaths_hexbin.png")
-        st.markdown("""<div class="insight-heat">
-            💡 <strong>Mortality Insight:</strong> Heatwave deaths in the 2010s were <strong>2.4× higher</strong> than the 1990s.
-            Events spanning more than 20 districts are rare but account for a disproportionate share of total deaths —
-            geographic spread amplifies mortality by exhausting healthcare and emergency response capacity simultaneously.
-        </div>""", unsafe_allow_html=True)
-
-    elif section == "🗺️ State-wise Risk Patterns":
-        st.markdown('<div class="section-header-heat">🗺️ State-wise Risk Patterns (Chart 8)</div>', unsafe_allow_html=True)
-        show_chart("chart-card-heat","Chart 8 · Top 15 States — Heatwave & Coldwave Event Count (Stacked Bar)","badge-geo","Stacked Horizontal Bar",
-            "Heatwave (pink) and coldwave (blue) event counts stacked per state — ranked by total exposure. A state with balanced colours faces year-round dual-season risk; dominance of one colour reveals seasonal skew. Directly informs state-level NDRF deployment and disaster preparedness planning.",
-            "CHARTS/08_state_events_stacked.png")
-        st.markdown("""<div class="insight-heat">
-            💡 <strong>Geographic Insight:</strong> <strong>Rajasthan, Uttar Pradesh, and Odisha</strong> top the heatwave count,
-            while <strong>Bihar and West Bengal</strong> face the highest coldwave exposure. States across the Indo-Gangetic Plain
-            face dual-season risk from both types simultaneously — requiring year-round extreme weather preparedness infrastructure.
-        </div>""", unsafe_allow_html=True)
-
-    elif section == "🔗 Correlations & Pairplot":
-        st.markdown('<div class="section-header-heat">🔗 Correlations & Pairplot (Charts 14, 15)</div>', unsafe_allow_html=True)
-        show_chart("chart-card-heat","Chart 14 · Correlation Matrix — All Numerical Features","badge-corr","Lower-Triangular Heatmap",
-            "Lower-triangular correlation heatmap across 6 key numeric variables: duration, peak_temp, temp_anomaly, threshold_exceeded, estimated_deaths, districts_affected. Red = strong positive, blue = strong negative. The near-perfect correlation between temp_anomaly and threshold_exceeded confirms feature redundancy.",
-            "CHARTS/14_correlation_heatmap.png")
-        show_chart("chart-card-heat","Chart 15 · Pairplot — Key Extreme-Temperature Indicators (Hue = Event Type)","badge-corr","5×5 Pairplot Grid",
-            "Every key variable plotted against every other in a 5×5 grid — pink = heatwave, blue = coldwave. Diagonal KDE curves show whether the two event types form distinct distributions. Bivariate scatter panels expose nonlinear relationships that single correlation values miss entirely.",
-            "CHARTS/15_pairplot.png")
-        st.markdown("""<div class="insight-heat">
-            💡 <strong>Correlation Insight:</strong> <strong>Duration × districts_affected</strong> show the strongest
-            positive correlation (≈ 0.71) — longer events spread further geographically. Surprisingly, peak temperature alone
-            is a <strong>weak predictor of deaths</strong>; it's the interaction of anomaly, duration, and affected population
-            density that drives mortality — pointing to the need for multi-variable composite risk indices.
-        </div>""", unsafe_allow_html=True)
-
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# AIR QUALITY INDEX DASHBOARD
-# ═══════════════════════════════════════════════════════════════════════════════
-elif dashboard == "🌫️ Air Quality Index Dashboard":
-
-    st.markdown("""
-    <div class="hero hero-aqi">
-      <h1>🌫️ Air Quality Index EDA</h1>
-      <p>Exploratory Data Analysis — Pollutant Pattern Discovery across 32,870 readings from 9 states (2015–2023)</p>
-      <span class="tag tag-aqi">2015–2023</span>
-      <span class="tag tag-aqi">4 Zones</span>
-      <span class="tag tag-aqi-warn">PM2.5 · PM10 · NO2</span>
-      <span class="tag tag-aqi-bad">12 Charts</span>
-      <span class="tag tag-aqi">Matplotlib · Seaborn</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown(f"""
-    <div class="kpi-grid">
-      <div class="kpi-card kpi-card-aqi"><div class="kpi-val-aqi">{aqi_total_records}</div><div class="kpi-lbl">Total Records</div></div>
-      <div class="kpi-card kpi-card-aqi"><div class="kpi-val-aqi">{fmt(aqi_stations)}</div><div class="kpi-lbl">Monitoring Stations</div></div>
-      <div class="kpi-card kpi-card-aqi"><div class="kpi-val-aqi-warn">{fmt(aqi_mean)}</div><div class="kpi-lbl">Mean AQI</div></div>
-      <div class="kpi-card kpi-card-aqi"><div class="kpi-val-aqi-bad">{fmt(aqi_max)}</div><div class="kpi-lbl">Peak AQI Recorded</div></div>
-      <div class="kpi-card kpi-card-aqi"><div class="kpi-val-aqi-bad">{fmt(aqi_severe_pct, suffix='%')}</div><div class="kpi-lbl">Poor+ Days</div></div>
-      <div class="kpi-card kpi-card-aqi"><div class="kpi-val-aqi-warn">{aqi_dominant}</div><div class="kpi-lbl">Top Pollutant</div></div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # ── SECTION 1: OVERVIEW & KPIs ────────────────────────────────────────────
-    if section == "📋 Overview & KPIs":
-        st.markdown('<div class="section-header-aqi">📋 AQI Category Distribution</div>', unsafe_allow_html=True)
-        show_chart("chart-card-aqi",
-            "Chart 1 · AQI Category Distribution — Donut Chart",
-            "badge-aqi", "Donut Chart",
-            "Overall proportion of all six AQI categories (Good → Severe) across the full 9-year record. The hollow centre displays total record count — an instant baseline before deeper analysis. <b>Satisfactory and Moderate together dominate</b>, signalling persistent mid-level pollution pressure across India's monitoring network.",
-            "CHARTS/01_category_donut.png",
-            "📂 Chart not found: CHARTS/01_category_donut.png — run aqi_eda notebook first.")
-        st.markdown("""<div class="insight-aqi">
-            💡 <strong>Key Insight:</strong> Satisfactory (39.3%) and Moderate (35.1%) together account for nearly
-            <strong>75% of all readings</strong>. Severe days represent only 0.7% of records but are heavily concentrated
-            in the winter months across North Indian stations — where temperature inversions trap particulate matter
-            close to the surface and AQI can spike to 400+.
-        </div>""", unsafe_allow_html=True)
-
-    # ── SECTION 2: ANNUAL & SEASONAL TRENDS ──────────────────────────────────
-    elif section == "📅 Annual & Seasonal Trends":
-        st.markdown('<div class="section-header-aqi">📅 Annual & Seasonal Trends (Charts 2, 3, 6)</div>', unsafe_allow_html=True)
-
-        col1, col2 = st.columns([3, 2])
+            show_chart(
+                "Event Duration Distribution",
+                "Histogram + KDE",
+                "Duration matters for stress accumulation, so this chart adds an important temporal exposure dimension to the module.",
+                "11_duration_kde.png",
+            )
+        insight("This section now has a clearer analytical arc: distribution, anomaly framing, then duration behavior.")
+    elif section == "Impact & Deaths":
+        section_heading("Temperature Extremes", "Mortality burden and exposure")
+        show_chart(
+            "Deaths vs Temperature Anomaly",
+            "Bubble Scatter",
+            "This is the best anchor chart for impact because it combines lethality, abnormality, and duration in one place.",
+            "05_deaths_anomaly_scatter.png",
+        )
+        col1, col2 = st.columns(2, gap="large")
         with col1:
-            show_chart("chart-card-aqi",
-                "Chart 2 · Annual Average AQI Trend by Zone (2015–2023)",
-                "badge-trend", "Line + Area Chart",
-                "Mean AQI tracked year-on-year for each geographic zone with shaded fills encoding cumulative air-quality pressure. The <b>2020 dip is unmistakable</b> across all zones — a direct COVID-19 lockdown signal. The subsequent rebound trajectory tells the story of India's post-lockdown pollution recovery.",
-                "CHARTS/02_annual_aqi_trend.png")
+            show_chart(
+                "Top 10 Deadliest Events",
+                "Ranked Bar",
+                "A ranking chart makes the deadliest heatwave and coldwave events immediately legible to the audience.",
+                "07_top10_deadliest.png",
+            )
         with col2:
-            show_chart("chart-card-aqi",
-                "Chart 3 · Monthly Seasonality — Polar Bar by Zone",
-                "badge-aqi", "Polar Bar Chart",
-                "12 months mapped onto a polar wheel with bars per zone. The sharp <b>winter spike (Oct–Feb)</b> captures India's biomass burning and temperature-inversion season; the <b>monsoon dip (Jun–Sep)</b> confirms wet scavenging of particulates as a natural seasonal cleanser.",
-                "CHARTS/03_monthly_polar.png")
+            show_chart(
+                "Decade-wise Total Deaths",
+                "Grouped Bar",
+                "This view helps frame mortality shifts over time and adds historical structure to the impact narrative.",
+                "12_decade_deaths_bar.png",
+            )
+        show_chart(
+            "Districts Affected vs Deaths",
+            "Hexbin",
+            "A more nuanced relationship chart that helps show whether geographic spread translates directly into mortality.",
+            "13_districts_deaths_hexbin.png",
+        )
+        insight("This section is now much easier to present: one main impact chart, two supporting comparisons, and one spread-vs-deaths relationship.")
 
-        show_chart("chart-card-aqi",
-            "Chart 6 · Year × Month Mean AQI Heatmap",
-            "badge-corr", "2D Heatmap",
-            "Every cell = mean AQI for that year–month pair. The bright <b>winter band (Nov–Jan)</b> running across all nine years is unmistakable. The noticeably cooler 2020 row validates the lockdown effect. Aug–Sep cells are consistently the lightest — the cleaner months driven by monsoon rainfall.",
-            "CHARTS/06_year_month_heatmap.png")
+    elif section == "State-wise Patterns":
+        section_heading("Temperature Extremes", "Which states carry the event burden")
+        show_chart(
+            "Top 15 States for Heatwave and Coldwave Events",
+            "Stacked Bar",
+            "This chart works well on its own as the geographic module because it clearly compares total exposure and event-type mix by state.",
+            "08_state_events_stacked.png",
+        )
+        insight("Keeping the state section intentionally focused gives it more impact and avoids overwhelming the page with too many competing geographic views.")
 
-        st.markdown("""<div class="insight-aqi">
-            💡 <strong>Temporal Insight:</strong> January is consistently the worst month, with mean AQI often
-            exceeding 160 in North India. August is the cleanest at roughly half that level.
-            The <strong>2020 lockdown cut mean AQI by ~25%</strong> across all zones — providing a rare natural
-            experiment confirming that transport and industrial emissions are the primary controllable levers.
-        </div>""", unsafe_allow_html=True)
-
-    # ── SECTION 3: POLLUTANT & CATEGORY ANALYSIS ─────────────────────────────
-    elif section == "💨 Pollutant & Category Analysis":
-        st.markdown('<div class="section-header-aqi">💨 Pollutant & Category Analysis (Charts 4, 5, 9)</div>', unsafe_allow_html=True)
-
-        show_chart("chart-card-aqi",
-            "Chart 4 · AQI Distribution by Category & Zone — Side-by-Side Violin + Strip",
-            "badge-dist", "Violin + Strip Plot",
-            "Violin width = record density at each AQI level; white strip dots = individual readings. The left panel confirms category thresholds are internally consistent. The right panel reveals how <b>North and East zones consistently skew higher</b> than South, reflecting the Indo-Gangetic plain's geographic pollution trap.",
-            "CHARTS/04_aqi_violin.png")
-
-        show_chart("chart-card-aqi",
-            "Chart 5 · PM2.5 vs AQI — Bubble Scatter (Bubble Size = PM10)",
-            "badge-poll", "Bubble Scatter",
-            "Each point sits at the intersection of PM2.5 concentration and AQI. Bubble size encodes PM10 load; colour encodes zone. Stations annotated in red are the <b>top-4 all-time worst readings</b>. The strong linear cluster confirms PM2.5 as the dominant AQI driver — a critical finding for pollution control targeting.",
-            "CHARTS/05_pm25_aqi_bubble.png")
-
-        show_chart("chart-card-aqi",
-            "Chart 9 · AQI Category vs Dominant Pollutant — Cross-tabulation Heatmap",
-            "badge-corr", "Cross-tab Heatmap",
-            "Maps dominant pollutant type against observed AQI category. PM2.5 dominating the <b>Severe row</b> confirms fine particulate matter as the primary culprit at the worst end of the scale. NO2 dominance in Good/Satisfactory rows reveals traffic-origin baseline pollution that persists even on cleaner days.",
-            "CHARTS/09_category_pollutant_heatmap.png")
-
-        st.markdown("""<div class="insight-aqi">
-            💡 <strong>Pollutant Insight:</strong> PM2.5 is the dominant pollutant in <strong>55.6% of all readings</strong>
-            and accounts for virtually all Severe-category days. NO2 leads on lower-AQI days, pointing to vehicular
-            traffic as a persistent baseline source. PM10 dominates in dry seasons when dust resuspension amplifies
-            coarse particle loads — especially in western and northern states.
-        </div>""", unsafe_allow_html=True)
-
-    # ── SECTION 4: STATION & GEOGRAPHIC PATTERNS ─────────────────────────────
-    elif section == "🏭 Station & Geographic Patterns":
-        st.markdown('<div class="section-header-aqi">🏭 Station & Geographic Patterns (Charts 7, 8)</div>', unsafe_allow_html=True)
-
-        show_chart("chart-card-aqi",
-            "Chart 7 · Top 15 Most Polluted Stations — Mean AQI (2015–2023)",
-            "badge-poll", "Horizontal Bar Chart",
-            "Colour-coded by zone, annotated with mean AQI and zone label. Reveals which specific monitoring stations have borne the <b>highest chronic pollution burden</b> over the 9-year period — directly informing targeted intervention priorities for regulators and urban planners.",
-            "CHARTS/07_top15_stations.png")
-
-        show_chart("chart-card-aqi",
-            "Chart 8 · State-wise AQI Category Breakdown — Stacked Horizontal Bar",
-            "badge-geo", "Stacked Horizontal Bar",
-            "Stacks all six AQI category counts per state. A state dominated by green (Good/Satisfactory) faces low chronic risk; dominance of red/purple (Poor/Very Poor/Severe) flags a <b>public health priority</b>. Directly supports state-level pollution control and CPCB enforcement prioritisation.",
-            "CHARTS/08_state_category_stacked.png")
-
-        st.markdown("""<div class="insight-aqi">
-            💡 <strong>Geographic Insight:</strong> <strong>North zone stations</strong> occupy the top positions for
-            chronic pollution, with some stations averaging AQI above 200 — firmly in the Poor category year-round.
-            Southern states show a far more favourable category mix, with Good and Satisfactory readings forming the
-            majority. This north–south divide reflects both industrial density and seasonal meteorological differences
-            that trap pollutants across the Indo-Gangetic plain.
-        </div>""", unsafe_allow_html=True)
-
-    # ── SECTION 5: CORRELATIONS & DISTRIBUTIONS ───────────────────────────────
-    elif section == "🔗 Correlations & Distributions":
-        st.markdown('<div class="section-header-aqi">🔗 Correlations & Distributions (Charts 10, 11, 12)</div>', unsafe_allow_html=True)
-
-        show_chart("chart-card-aqi",
-            "Chart 10 · AQI Distribution by Year & Zone — Grouped Boxplot",
-            "badge-corr", "Grouped Boxplot",
-            "Grouped boxes compare zone-level AQI spread for each year. The <b>2020 box shift downward</b> across all zones marks the lockdown period. Widening IQR in recent years may indicate increasing AQI variability — more extreme both good and bad days — reflecting intensifying seasonal pollution cycles.",
-            "CHARTS/10_aqi_year_zone_box.png")
-
-        show_chart("chart-card-aqi",
-            "Chart 11 · Pollutant Concentration Distribution — KDE + Histogram",
-            "badge-dist", "KDE + Histogram",
-            "Overlapping histograms and smooth KDE curves for PM2.5, PM10, and NO2 with annotated mean and median lines. The <b>longer right tail for PM2.5</b> indicates chronic high-load events that push AQI into Poor/Severe range and dominate public health impact far beyond what the median concentration would suggest.",
-            "CHARTS/11_pollutant_kde.png")
-
-        show_chart("chart-card-aqi",
-            "Chart 12 · Pollutant Correlation Matrix — Lower Triangle Heatmap",
-            "badge-corr", "Correlation Heatmap",
-            "Pearson correlations between AQI and all six pollutants (lower triangle only). <b>Strong PM2.5–AQI and PM10–AQI correlations</b> confirm particulate dominance. The weak or negative O3 (ozone) correlation reflects its photochemical origin — rising with sunlight intensity precisely when other combustion pollutants may drop.",
-            "CHARTS/12_pollutant_correlation.png")
-
-        st.markdown("""<div class="insight-aqi">
-            💡 <strong>Correlation Insight:</strong> PM2.5 shows the <strong>strongest positive correlation with AQI (≈ 0.93)</strong>,
-            confirming it as the primary driver. CO follows closely, reflecting shared combustion sources.
-            Ozone (O3) shows a weak negative correlation with PM2.5 — an anti-correlation that occurs because
-            ozone formation peaks on sunny, low-particulate days. This means high-PM2.5 and high-O3 days
-            rarely coincide, but both pose independent health risks requiring separate monitoring strategies.
-        </div>""", unsafe_allow_html=True)
+    elif section == "Correlations":
+        section_heading("Temperature Extremes", "Numerical relationships and multivariate context")
+        show_chart(
+            "Correlation Matrix",
+            "Heatmap",
+            "A compact summary of feature coupling across the temperature-extremes dataset and a practical bridge toward modeling or feature selection.",
+            "14_correlation_heatmap.png",
+        )
+        show_chart(
+            "Pairplot of Key Indicators",
+            "Pairplot",
+            "This gives the broader multivariate picture and helps separate heatwave behavior from coldwave behavior across several dimensions.",
+            "15_pairplot.png",
+        )
+        insight("The final section stays clean and technical, which is the right finish for a dashboard project like this.")
 
 
+elif dataset == "Air Quality Analysis":
+    total_records = f"{len(aqi_df):,}"
+    stations = aqi_df["station"].nunique() if "station" in aqi_df else 0
+    mean_aqi = round(aqi_df["aqi"].mean(), 1) if "aqi" in aqi_df else 0
+    max_aqi = int(aqi_df["aqi"].max()) if "aqi" in aqi_df and len(aqi_df) else 0
+    poor_pct = (
+        round(aqi_df["category"].isin(["Poor", "Very Poor", "Severe"]).sum() / len(aqi_df) * 100, 1)
+        if "category" in aqi_df and len(aqi_df)
+        else 0
+    )
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# RAINFALL DASHBOARD
-# ═══════════════════════════════════════════════════════════════════════════════
+    render_hero(
+        "Air Quality Index Intelligence",
+        "A focused AQI module for reading pollutant pressure, seasonal pollution cycles, monitoring-station differences, and category-level public health signals.",
+        ["2015-2023", "AQI readings", "PM2.5 + PM10 + NO2", "12 visual outputs"],
+        UI["hero_aqi"],
+    )
+    data_notice("10_air_quality_index_2015_2023.csv")
+
+    cols = st.columns(5)
+    with cols[0]:
+        stat_card(total_records, "AQI Records", UI["accent"])
+    with cols[1]:
+        stat_card(stations, "Stations", UI["accent_2"])
+    with cols[2]:
+        stat_card(mean_aqi, "Mean AQI", UI["heat"])
+    with cols[3]:
+        stat_card(max_aqi, "Peak AQI", UI["danger"])
+    with cols[4]:
+        stat_card(f"{poor_pct}%", "Poor+ Days", UI["cold"])
+
+    if section == "Overview":
+        section_heading("Air Quality Analysis", "AQI category distribution and baseline burden")
+        show_chart(
+            "AQI Category Distribution",
+            "Donut",
+            "This overview chart shows how readings are distributed from Good to Severe and quickly establishes the chronic pollution baseline.",
+            renderer=lambda: native_category_chart(aqi_df, "category", "greens"),
+        )
+        insight("The overview is the AQI module's landing page: it tells whether the dataset is dominated by clean days, moderate pollution, or public-health warning categories.")
+
+    elif section == "Annual & Seasonal Trends":
+        section_heading("Air Quality Analysis", "Long-run trend and seasonal pollution rhythm")
+        col1, col2 = st.columns([1.45, 1], gap="large")
+        with col1:
+            show_chart(
+                "Annual Average AQI Trend by Zone",
+                "Line + Area",
+                "This chart tracks the annual AQI signal by geographic zone and helps surface broad shifts such as lockdown-era drops or post-lockdown rebounds.",
+                "02_annual_aqi_trend.png",
+            )
+        with col2:
+            show_chart(
+                "Monthly AQI Seasonality",
+                "Polar Chart",
+                "The polar chart makes the winter pollution spike and monsoon cleaning effect visually immediate.",
+                renderer=lambda: native_month_chart(aqi_df, "month", "aqi", UI["accent"]),
+            )
+        show_chart(
+            "Year by Month Mean AQI Heatmap",
+            "Heatmap",
+            "This chart reveals recurring winter bands, clean monsoon months, and unusually high or low pollution periods across years.",
+            "06_year_month_heatmap.png",
+        )
+        insight("The temporal view is where AQI becomes environmental behavior rather than just a number: winter trapping, monsoon washout, and year-level disruption all show up together.")
+
+    elif section == "Pollutant Analysis":
+        section_heading("Air Quality Analysis", "Pollutants, categories, and AQI drivers")
+        show_chart(
+            "AQI Distribution by Category and Zone",
+            "Violin + Strip",
+            "This chart compares AQI spread across category and zone, showing whether certain regions consistently skew toward higher pollution.",
+            "04_aqi_violin.png",
+        )
+        show_chart(
+            "PM2.5 vs AQI",
+            "Bubble Scatter",
+            "A relationship chart for particulate pollution: PM2.5 tends to explain the high-AQI end of the dataset better than most other pollutants.",
+            "05_pm25_aqi_bubble.png",
+        )
+        show_chart(
+            "AQI Category vs Dominant Pollutant",
+            "Cross-tab Heatmap",
+            "This matrix connects AQI severity classes with the pollutants most often responsible for those conditions.",
+            "09_category_pollutant_heatmap.png",
+        )
+        insight("This section is the diagnostic core of AQI analysis because it connects the AQI score to actual pollutant composition.")
+
+    elif section == "Station & Geography":
+        section_heading("Air Quality Analysis", "Station burden and state category mix")
+        show_chart(
+            "Top 15 Most Polluted Stations",
+            "Ranked Bar",
+            "A station-level ranking makes chronic pollution hotspots easier to identify than a broad state average.",
+            renderer=lambda: native_bar_chart(aqi_df, "station", UI["accent"]),
+        )
+        show_chart(
+            "State-wise AQI Category Breakdown",
+            "Stacked Bar",
+            "This chart compares how clean, moderate, and hazardous AQI categories distribute across states.",
+            "08_state_category_stacked.png",
+        )
+        insight("Geographic AQI patterns are most useful when they name where intervention should happen, not just how polluted the average day is.")
+
+    elif section == "Correlations":
+        section_heading("Air Quality Analysis", "Pollutant distributions and numerical relationships")
+        show_chart(
+            "AQI Distribution by Year and Zone",
+            "Grouped Boxplot",
+            "This view captures the spread of AQI values by year and zone, not only the average trend.",
+            "10_aqi_year_zone_box.png",
+        )
+        show_chart(
+            "Pollutant Concentration Distribution",
+            "KDE + Histogram",
+            "Distribution curves reveal whether pollutant load is stable, skewed, or driven by rare high-concentration episodes.",
+            "11_pollutant_kde.png",
+        )
+        show_chart(
+            "Pollutant Correlation Matrix",
+            "Correlation Heatmap",
+            "This matrix summarizes which pollutants move with AQI and which behave independently or seasonally.",
+            "12_pollutant_correlation.png",
+        )
+        insight("The correlation page is the bridge from EDA to modeling: it tells which pollutant signals are redundant, dominant, or worth treating separately.")
+
+
+elif dataset == "Rainfall Analysis":
+    total_records = f"{len(rain_df):,}"
+    states = rain_df["state"].nunique() if "state" in rain_df else 0
+    districts = rain_df["district"].nunique() if "district" in rain_df else 0
+    mean_rain = round(rain_df["rainfall_mm"].mean(), 1) if "rainfall_mm" in rain_df else 0
+    excess_pct = (
+        round((rain_df["category"] == "Excess").sum() / len(rain_df) * 100, 1)
+        if "category" in rain_df and len(rain_df)
+        else 0
+    )
+
+    render_hero(
+        "Monthly Rainfall Intelligence",
+        "A rainfall module for exploring long-run monsoon variability, monthly departures, district/state exposure, and flood-versus-deficit patterns.",
+        ["1901-2023", "Monthly records", "District rainfall", "15 visual outputs"],
+        UI["hero_rain"],
+    )
+    data_notice("02_monthly_rainfall_district_1901_2023.csv")
+
+    cols = st.columns(5)
+    with cols[0]:
+        stat_card(total_records, "Rainfall Records", UI["accent"])
+    with cols[1]:
+        stat_card(states, "States", UI["accent_2"])
+    with cols[2]:
+        stat_card(districts, "Districts", UI["cyclone"])
+    with cols[3]:
+        stat_card(f"{mean_rain} mm", "Mean Rainfall", UI["cold"])
+    with cols[4]:
+        stat_card(f"{excess_pct}%", "Excess Months", UI["heat"])
+
+    if section == "Overview":
+        section_heading("Rainfall Analysis", "Rainfall category distribution")
+        show_chart(
+            "Rainfall Category Split",
+            "Donut",
+            "This chart establishes how district-months divide across Excess, Normal, Deficient, and Scanty rainfall categories.",
+            renderer=lambda: native_category_chart(rain_df, "category", "blues"),
+        )
+        insight("The category split is the right opening chart because it frames rainfall as both water availability and hazard risk.")
+
+    elif section == "Annual & Seasonal Trends":
+        section_heading("Rainfall Analysis", "Annual variability and monsoon seasonality")
+        col1, col2 = st.columns([1.45, 1], gap="large")
+        with col1:
+            show_chart(
+                "Annual Mean Monthly Rainfall",
+                "Line + Area",
+                "This long-run line chart is the rainfall module's historical anchor, showing how mean rainfall varies across decades.",
+                "02_yearly_trend.png",
+            )
+        with col2:
+            show_chart(
+                "Monthly Rainfall Seasonality",
+                "Polar Chart",
+                "The polar view makes monsoon concentration obvious by showing the annual rainfall cycle as a calendar rhythm.",
+                renderer=lambda: native_month_chart(rain_df, "month_num", "rainfall_mm", UI["accent_2"]),
+            )
+        show_chart(
+            "Year by Month Mean Rainfall Heatmap",
+            "Heatmap",
+            "This heatmap shows drought-like rows, strong monsoon months, and unusual seasonal patterns across the historical timeline.",
+            "06_heatmap_year_month.png",
+        )
+        insight("Rainfall is fundamentally seasonal, so this page moves from long-run annual variation into the exact monsoon months where most water arrives.")
+
+    elif section == "Category & Departure":
+        section_heading("Rainfall Analysis", "Rainfall category thresholds and departure behavior")
+        show_chart(
+            "Rainfall Distribution by Category",
+            "Violin + Strip",
+            "This chart shows how actual rainfall amounts spread within each IMD-style category.",
+            "04_category_violin.png",
+        )
+        show_chart(
+            "Departure Percentage vs Rainfall",
+            "Bubble Scatter",
+            "A relationship view for actual rainfall against percentage departure from normal, with rainy-day intensity encoded by bubble size.",
+            "05_departure_scatter.png",
+        )
+        show_chart(
+            "Departure Percentage by Month",
+            "Grouped Boxplot",
+            "Monthly boxes show which calendar months have the most volatile departures from normal.",
+            "10_departure_month_box.png",
+        )
+        insight("Departure analysis is what turns rainfall from volume into anomaly: it reveals whether a month was unusual for that place and season.")
+
+    elif section == "State & Zone Patterns":
+        section_heading("Rainfall Analysis", "Where rainfall extremes concentrate")
+        show_chart(
+            "Top 10 Highest District Monthly Rainfall Records",
+            "Ranked Bar",
+            "This chart surfaces the most extreme district-month rainfall records and the states where they occurred.",
+            "07_top10_rainfall.png",
+        )
+        show_chart(
+            "Top 15 States by Rainfall Category Count",
+            "Stacked Bar",
+            "The stacked chart compares state exposure to Excess, Normal, Deficient, and Scanty records.",
+            renderer=lambda: native_bar_chart(rain_df, "state", UI["accent_2"]),
+        )
+        show_chart(
+            "Agro-zone vs Rainfall Category",
+            "Cross-tab Heatmap",
+            "This matrix connects rainfall categories with agro-ecological context, which is useful for drought and flood planning.",
+            "09_agrozone_category_heatmap.png",
+        )
+        insight("The geography page gives rainfall consequences a location: flood exposure, deficit recurrence, and agro-zone sensitivity.")
+
+    elif section == "Correlations":
+        section_heading("Rainfall Analysis", "Distributions, decade shifts, and feature relationships")
+        show_chart(
+            "Rainy Days Distribution by Category",
+            "KDE + Histogram",
+            "This chart separates frequent low-rain months from high-rain months that may occur across fewer intense rainy days.",
+            "11_rainy_days_kde.png",
+        )
+        show_chart(
+            "Decade-wise Mean Monthly Rainfall by Agro-zone",
+            "Grouped Bar",
+            "This chart compares rainfall means across agro-zones over decades, making long-run shifts easier to read.",
+            "12_decade_zone_bar.png",
+        )
+        col1, col2 = st.columns(2, gap="large")
+        with col1:
+            show_chart(
+                "Departure Percentage vs Rainy Days",
+                "Hexbin",
+                "Hexbin density reveals the common center and rare extremes in departure-versus-rainy-days space.",
+                "13_departure_rainydays_hexbin.png",
+            )
+        with col2:
+            show_chart(
+                "Rainfall Feature Correlation Matrix",
+                "Correlation Heatmap",
+                "This chart highlights redundant rainfall features and the strongest numerical relationships.",
+                "14_correlation_heatmap.png",
+            )
+        show_chart(
+            "Pairplot of Rainfall Indicators",
+            "Pairplot",
+            "A broader multivariate view of rainfall indicators colored by category.",
+            "15_pairplot.png",
+        )
+        insight("The final rainfall page is intentionally analytical: distributions, decades, density, correlations, and pairwise relationships.")
+
+
 else:
+    data_map = load_mining_data()
+    transactions = build_transactions(mining_dataset, data_map)
+    all_items = sorted(set(item for transaction in transactions for item in transaction))
 
-    st.markdown("""
-    <div class="hero hero-rainfall">
-      <h1>🌧️ Monthly Rainfall EDA</h1>
-      <p>Exploratory Data Analysis — Extreme Pattern Discovery across 44,280 district-month records (1901–2023)</p>
-      <span class="tag tag-rain">1901–2023</span>
-      <span class="tag tag-rain">123 Years</span>
-      <span class="tag tag-rain-ex">Excess · Normal</span>
-      <span class="tag tag-rain-def">Deficient · Scanty</span>
-      <span class="tag tag-rain">15 Charts</span>
-      <span class="tag tag-rain">Matplotlib · Seaborn</span>
+    render_hero(
+        f"Association Mining: {mining_dataset}",
+        "A rule-mining workspace for discovering repeated co-occurrence patterns in discretised weather records using Apriori, ECLAT, and FP-Growth implemented directly in Python.",
+        [mining_algorithm, f"Support >= {min_sup:.2f}", f"Confidence >= {min_conf:.2f}", f"Max length {max_len}"],
+        "linear-gradient(135deg, rgba(37,99,235,0.30), rgba(20,184,166,0.18), rgba(88,28,135,0.30))",
+    )
+
+    cols = st.columns(5)
+    with cols[0]:
+        stat_card(f"{len(transactions):,}", "Transactions", UI["accent"])
+    with cols[1]:
+        stat_card(len(all_items), "Unique Items", UI["accent_2"])
+    with cols[2]:
+        avg_size = np.mean([len(transaction) for transaction in transactions]) if transactions else 0
+        stat_card(f"{avg_size:.1f}", "Avg Txn Size", UI["cyclone"])
+    with cols[3]:
+        stat_card(f"{min_sup:.2f}", "Min Support", UI["heat"])
+    with cols[4]:
+        stat_card(f"{min_conf:.2f}", "Min Confidence", UI["cold"])
+
+    if not transactions:
+        st.error(
+            f"No transactions could be built for {mining_dataset}. Check that the required CSV exists in the project folder and has the expected columns."
+        )
+    else:
+        section_heading("Association Mining", "Discretised transaction vocabulary")
+        item_cols = st.columns(4)
+        for idx, item in enumerate(all_items):
+            item_cols[idx % 4].markdown(
+                f"""
+                <span style="display:inline-block;margin:0.2rem 0;padding:0.38rem 0.68rem;border-radius:999px;
+                background:rgba(255,255,255,0.06);border:1px solid {UI["panel_border"]};
+                color:{UI["text"]};font-size:0.78rem;font-weight:700;">{item}</span>
+                """,
+                unsafe_allow_html=True,
+            )
+
+        insight(
+            f"{len(transactions):,} transactions with {len(all_items)} unique discretised items. The thresholds are applied to this basket-style representation of the selected weather dataset."
+        )
+
+        if mining_algorithm == "Compare All Three":
+            section_heading("Association Mining", "Algorithm comparison")
+            results = {}
+            for algorithm in ["Apriori", "ECLAT", "FP-Growth"]:
+                with st.spinner(f"Running {algorithm}..."):
+                    rules_df, freq_df, elapsed = run_mining_cached(
+                        mining_dataset, algorithm, min_sup, min_conf, max_len, transactions
+                    )
+                results[algorithm] = (rules_df, freq_df, elapsed)
+
+            comparison = []
+            for algorithm, (rules_df, freq_df, elapsed) in results.items():
+                comparison.append(
+                    {
+                        "algorithm": algorithm,
+                        "rules_found": len(rules_df),
+                        "frequent_itemsets": len(freq_df),
+                        "max_lift": round(rules_df["lift"].max(), 3) if not rules_df.empty else None,
+                        "avg_confidence": round(rules_df["confidence"].mean(), 3) if not rules_df.empty else None,
+                        "runtime_seconds": elapsed,
+                    }
+                )
+            st.dataframe(pd.DataFrame(comparison), use_container_width=True, hide_index=True)
+            insight(
+                "All three methods use the same support, confidence, and lift definitions. Differences in runtime come from search strategy: Apriori generates candidates, ECLAT intersects transaction-id lists, and FP-Growth compresses common prefixes into a tree."
+            )
+
+            c1, c2, c3 = st.columns(3, gap="large")
+            for column, algorithm in zip([c1, c2, c3], ["Apriori", "ECLAT", "FP-Growth"]):
+                with column:
+                    section_heading(algorithm, "Top rules by lift")
+                    render_rules_table(results[algorithm][0], max_rows=8)
+        else:
+            with st.spinner(f"Running {mining_algorithm}..."):
+                rules_df, freq_df, elapsed = run_mining_cached(
+                    mining_dataset, mining_algorithm, min_sup, min_conf, max_len, transactions
+                )
+
+            section_heading("Association Mining", f"Results from {mining_algorithm}")
+            metric_cols = st.columns(5)
+            metric_cols[0].metric("Rules Found", len(rules_df))
+            metric_cols[1].metric("Frequent Itemsets", len(freq_df))
+            metric_cols[2].metric("Max Lift", f"{rules_df['lift'].max():.3f}" if not rules_df.empty else "0.000")
+            metric_cols[3].metric(
+                "Avg Confidence", f"{rules_df['confidence'].mean():.3f}" if not rules_df.empty else "0.000"
+            )
+            metric_cols[4].metric("Runtime", f"{elapsed:.3f}s")
+
+            section_heading("Frequent Itemsets", "Top item combinations by support")
+            left, right = st.columns([1, 1], gap="large")
+            with left:
+                render_frequent_items(freq_df, top_n=20)
+            with right:
+                if not freq_df.empty:
+                    size_counts = freq_df.groupby("size").size().reset_index(name="count")
+                    st.bar_chart(size_counts, x="size", y="count", use_container_width=True)
+
+            section_heading("Association Rules", "Top rules sorted by lift")
+            render_rules_table(rules_df, max_rows=25)
+
+            if not rules_df.empty:
+                section_heading("Lift Distribution", "Rule strength bands")
+                lift_bins = pd.cut(
+                    rules_df["lift"],
+                    bins=[0, 1, 1.5, 2, 3, np.inf],
+                    labels=["<=1.0", "1.0-1.5", "1.5-2.0", "2.0-3.0", ">3.0"],
+                )
+                lift_counts = lift_bins.value_counts().sort_index().reset_index()
+                lift_counts.columns = ["lift_band", "rules"]
+                st.bar_chart(lift_counts, x="lift_band", y="rules", use_container_width=True)
+
+            if mining_dataset == "Cyclone":
+                insight(
+                    "For cyclones, high-lift rules usually connect category, wind, storm surge, landfall, and fatality bands. These rules validate how intensity labels and impact indicators move together."
+                )
+            elif mining_dataset == "Heatwave / Coldwave":
+                insight(
+                    "For temperature extremes, the strongest rules tend to combine event type, severity, alert level, duration, and deaths. This helps expose where warning categories align with observed impact."
+                )
+            elif mining_dataset == "Air Quality Index":
+                insight(
+                    "For AQI, winter season, PM2.5 dominance, and poor AQI bands often form the most interpretable patterns, especially for seasonal inversion and particulate buildup."
+                )
+            else:
+                insight(
+                    "For rainfall, monsoon season, agro-zone, departure class, and heavy-rainfall bands reveal flood and deficit-prone combinations across the long historical record."
+                )
+
+
+st.markdown(
+    f"""
+    <div style="margin-top:1rem;padding:1rem 0 0.4rem 0;color:{UI["subtle"]};font-size:0.84rem;text-align:center;">
+        India Weather Extremes Dashboard Project - EDA + Association Mining - Streamlit presentation layer for your analysis notebooks
     </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown(f"""
-    <div class="kpi-grid">
-      <div class="kpi-card kpi-card-rainfall"><div class="kpi-val-rain">{rain_total_records}</div><div class="kpi-lbl">Total Records</div></div>
-      <div class="kpi-card kpi-card-rainfall"><div class="kpi-val-rain">{fmt(rain_states)}</div><div class="kpi-lbl">States</div></div>
-      <div class="kpi-card kpi-card-rainfall"><div class="kpi-val-rain">{fmt(rain_districts)}</div><div class="kpi-lbl">Districts</div></div>
-      <div class="kpi-card kpi-card-rainfall"><div class="kpi-val-rain-ex">{fmt(rain_mean)} mm</div><div class="kpi-lbl">Mean Monthly Rainfall</div></div>
-      <div class="kpi-card kpi-card-rainfall"><div class="kpi-val-rain-ex">{fmt(rain_excess_pct, suffix='%')}</div><div class="kpi-lbl">Excess Months</div></div>
-      <div class="kpi-card kpi-card-rainfall"><div class="kpi-val-rain-def">{fmt(rain_deficit_pct, suffix='%')}</div><div class="kpi-lbl">Deficit Months</div></div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # ── SECTION 1: OVERVIEW & KPIs ────────────────────────────────────────────
-    if section == "📋 Overview & KPIs":
-        st.markdown('<div class="section-header-rainfall">📋 Rainfall Category Distribution</div>', unsafe_allow_html=True)
-        show_chart("chart-card-rainfall",
-            "Chart 1 · Rainfall Category Split — Donut Chart",
-            "badge-rain", "Donut Chart",
-            "Overall proportion of Excess, Normal, Deficient, and Scanty months across the full 123-year record. The hollow centre displays total record count — an instant baseline before deeper analysis. <b>Normal months form the majority</b> but Deficient and Scanty together signal chronic water-stress years that drive India's recurring drought cycles.",
-            "CHARTS/01_category_donut.png",
-            "📂 Chart not found: CHARTS/01_category_donut.png — run rainfall_eda notebook first.")
-        st.markdown("""<div class="insight-rainfall">
-            💡 <strong>Key Insight:</strong> Normal months dominate at over 50% of all records, yet
-            <strong>Deficient and Scanty months combined account for roughly 30%</strong> of observations —
-            a persistent deficit signal embedded in India's century-long rainfall record. Excess months cluster
-            heavily in the June–September monsoon window, confirming that annual water availability is largely
-            determined in just 4 months of the year.
-        </div>""", unsafe_allow_html=True)
-
-    # ── SECTION 2: ANNUAL & SEASONAL TRENDS ──────────────────────────────────
-    elif section == "📅 Annual & Seasonal Trends":
-        st.markdown('<div class="section-header-rainfall">📅 Annual & Seasonal Trends (Charts 2, 3, 6)</div>', unsafe_allow_html=True)
-
-        col1, col2 = st.columns([3, 2])
-        with col1:
-            show_chart("chart-card-rainfall",
-                "Chart 2 · Annual Mean Monthly Rainfall — Line + Area (1901–2023)",
-                "badge-trend", "Line + Area Chart",
-                "District-averaged monthly rainfall tracked year-on-year with shaded fill encoding cumulative seasonal pressure. The <b>peak year is annotated</b> with an arrow label. Long-term shifts in the trend line are a direct monsoon-variability and climate-change signal across 12 decades.",
-                "CHARTS/02_yearly_trend.png")
-        with col2:
-            show_chart("chart-card-rainfall",
-                "Chart 3 · Monthly Seasonality — Polar Bar Chart",
-                "badge-rain", "Polar Bar Chart",
-                "12 months on a polar wheel coloured by intensity (YlGnBu). The <b>towering bars at June–September</b> encode India's monsoon dominance in a single visual — the sharp shoulder flanking the peak marks the onset and withdrawal of the South-West Monsoon.",
-                "CHARTS/03_monthly_polar.png")
-
-        show_chart("chart-card-rainfall",
-            "Chart 6 · Year × Month Mean Rainfall Heatmap (every 5 years)",
-            "badge-corr", "2D Heatmap",
-            "Every cell = average district rainfall in that year–month pair, sampled every 5 years for readability. The <b>bright Jun–Sep band</b> is clearly visible across all decades, while drought years appear as conspicuously cold rows. Historical anomalies — failed monsoons, El Niño years — jump out as isolated pale rows.",
-            "CHARTS/06_heatmap_year_month.png")
-
-        st.markdown("""<div class="insight-rainfall">
-            💡 <strong>Temporal Insight:</strong> June–September accounts for over <strong>75% of India's annual rainfall</strong>.
-            The heatmap clearly shows that years with below-normal June and July readings almost always produce full-year
-            deficits — making early monsoon onset a critical leading indicator for annual water security assessment.
-            Post-2000, the annual trend line shows increased inter-annual variability, a known fingerprint of
-            climate-driven monsoon disruption.
-        </div>""", unsafe_allow_html=True)
-
-    # ── SECTION 3: CATEGORY & DEPARTURE ANALYSIS ─────────────────────────────
-    elif section == "💧 Category & Departure Analysis":
-        st.markdown('<div class="section-header-rainfall">💧 Category & Departure Analysis (Charts 4, 5, 10)</div>', unsafe_allow_html=True)
-
-        show_chart("chart-card-rainfall",
-            "Chart 4 · Rainfall Distribution by Category — Violin + Strip",
-            "badge-dist", "Violin + Strip Plot",
-            "Violin width = record density at each rainfall level; white strip dots = individual district-months. Comparing the four IMD category panels reveals how thresholds translate into actual mm distributions — and whether <b>Excess events create a heavy upper tail</b> that overwhelms drainage infrastructure.",
-            "CHARTS/04_category_violin.png")
-
-        show_chart("chart-card-rainfall",
-            "Chart 5 · Departure % vs Rainfall — Bubble Scatter (Bubble = Rainy Days)",
-            "badge-rain-x", "Bubble Scatter",
-            "Each point = one district-month at the intersection of % departure from normal and actual rainfall (mm). Bubble size encodes estimated rainy days. <b>Top-4 record rainfall events</b> are annotated in red. The dashed zero line separates surplus (right) from deficit (left) — visually anchoring the climatological norm.",
-            "CHARTS/05_departure_scatter.png")
-
-        show_chart("chart-card-rainfall",
-            "Chart 10 · Departure % by Month — Grouped Boxplot",
-            "badge-corr", "Grouped Boxplot",
-            "Boxes compare how far monthly rainfall deviated from historical norms for each calendar month. The dashed zero line separates surplus from deficit. <b>Wide boxes at monsoon months</b> indicate high inter-annual variability; tight boxes in winter confirm near-predictable dryness that planners can reliably model.",
-            "CHARTS/10_departure_month_box.png")
-
-        st.markdown("""<div class="insight-rainfall">
-            💡 <strong>Departure Insight:</strong> July and August show the <b>widest departure distributions</b> of any month —
-            confirming these mid-monsoon months carry the highest year-to-year uncertainty.
-            Excess events (positive departure > 60%) in July are associated with the most damaging floods, while
-            Deficient July readings trigger immediate drought alerts across the Kharif crop belt.
-            January and February show near-zero median departures with very tight IQRs — essentially deterministic dry months.
-        </div>""", unsafe_allow_html=True)
-
-    # ── SECTION 4: STATE & ZONE PATTERNS ─────────────────────────────────────
-    elif section == "🗺️ State & Zone Patterns":
-        st.markdown('<div class="section-header-rainfall">🗺️ State & Zone Patterns (Charts 7, 8, 9)</div>', unsafe_allow_html=True)
-
-        show_chart("chart-card-rainfall",
-            "Chart 7 · Top 10 Highest District Monthly Rainfall Records (1901–2023)",
-            "badge-rain", "Horizontal Bar Chart",
-            "Blue bars for the highest-ever district-month rainfall records, annotated with mm value, year, state, and month. Reveals which districts and seasons have historically broken records — and whether the extremes are <b>concentrated in a few monsoon-belt states</b> or spread across India's geography.",
-            "CHARTS/07_top10_rainfall.png")
-
-        show_chart("chart-card-rainfall",
-            "Chart 8 · Top 15 States — Rainfall Category Record Count (Stacked Bar)",
-            "badge-geo", "Stacked Horizontal Bar",
-            "Stacks Excess (blue), Normal (green), Deficient (orange), and Scanty (grey) record counts per state. A state with dominant blue faces <b>chronic flood risk</b>; one with dominant orange/grey faces <b>perennial drought</b>. Directly informs state-level water security and irrigation investment prioritisation.",
-            "CHARTS/08_state_stacked.png")
-
-        show_chart("chart-card-rainfall",
-            "Chart 9 · Agro-Zone vs Rainfall Category — Cross-tabulation Heatmap",
-            "badge-corr", "Cross-tab Heatmap",
-            "Maps how agro-ecological zones (Arid, Semi-Arid, Sub-Humid, Humid) align with actual rainfall categories. Cells where <b>Arid zones recorded Excess events</b> — or where Humid zones went Scanty — reveal climate stress anomalies beyond the zone's historical baseline, flagging regions most impacted by monsoon disruption.",
-            "CHARTS/09_agrozone_category_heatmap.png")
-
-        st.markdown("""<div class="insight-rainfall">
-            💡 <strong>Geographic Insight:</strong> The <strong>Humid agro-zone dominates Normal and Excess counts</strong>,
-            confirming its reliable monsoon receipt. Critically, even Arid zones record a significant share of Excess months —
-            these are intense, short-duration events that generate flash floods rather than beneficial recharge,
-            as the dry soils cannot absorb the sudden surplus. Semi-Arid zones show the most balanced Deficient/Normal mix,
-            making them the most sensitive to inter-annual monsoon shifts for agricultural planning.
-        </div>""", unsafe_allow_html=True)
-
-    # ── SECTION 5: CORRELATIONS & DISTRIBUTIONS ───────────────────────────────
-    elif section == "🔗 Correlations & Distributions":
-        st.markdown('<div class="section-header-rainfall">🔗 Correlations & Distributions (Charts 11, 12, 13, 14, 15)</div>', unsafe_allow_html=True)
-
-        show_chart("chart-card-rainfall",
-            "Chart 11 · Rainy Days Distribution by Category — KDE + Histogram",
-            "badge-dist", "KDE + Histogram",
-            "Overlapping histograms and smooth KDE curves for each IMD category on the same axis. Mean lines annotated per category. A <b>longer right tail for Excess events</b> indicates months with near-continuous precipitation — these are the events that overwhelm drainage infrastructure and trigger urban flooding.",
-            "CHARTS/11_rainy_days_kde.png")
-
-        show_chart("chart-card-rainfall",
-            "Chart 12 · Decade-wise Mean Monthly Rainfall by Agro-Zone — Grouped Bar",
-            "badge-rain-x", "Grouped Bar Chart",
-            "Side-by-side decade bars compare average monthly rainfall across agro-zones with annotated values floating above each bar. A <b>shrinking Humid-zone bar</b> across recent decades reveals the long-term monsoon weakening signal most relevant to India's food security and groundwater recharge planning.",
-            "CHARTS/12_decade_zone_bar.png")
-
-        col1, col2 = st.columns(2)
-        with col1:
-            show_chart("chart-card-rainfall",
-                "Chart 13 · Departure % vs Rainy Days — Hexbin Density",
-                "badge-dist", "Hexbin Density",
-                "Hexagonal bins show where the majority of district-months cluster in departure-vs-rainy-days space. The dense core near zero departure represents the climatological normal; <b>rare hot cells in the extremes</b> are drought or flood outliers that stress infrastructure and relief systems.",
-                "CHARTS/13_departure_rainydays_hexbin.png")
-        with col2:
-            show_chart("chart-card-rainfall",
-                "Chart 14 · Correlation Matrix — Rainfall Features",
-                "badge-corr", "Correlation Heatmap",
-                "Lower-triangular Pearson correlation heatmap across 5 key numeric variables. The <b>near-perfect correlation between departure_mm and departure_pct</b> confirms feature redundancy — a critical insight for avoiding multicollinearity in drought prediction models.",
-                "CHARTS/14_correlation_heatmap.png")
-
-        show_chart("chart-card-rainfall",
-            "Chart 15 · Pairplot — Key Rainfall Indicators (Hue = IMD Category)",
-            "badge-rain", "4×4 Pairplot Grid",
-            "Every key variable plotted against every other in a 4×4 grid — blue = Excess, green = Normal, orange = Deficient, grey = Scanty. Diagonal KDE curves show whether the four IMD categories form distinct distributions. <b>Bivariate scatter panels expose threshold effects</b> between normal_mm and departure_pct that single correlation values miss entirely.",
-            "CHARTS/15_pairplot.png")
-
-        st.markdown("""<div class="insight-rainfall">
-            💡 <strong>Correlation Insight:</strong> <strong>departure_mm and departure_pct share a near-perfect correlation (≈ 0.99)</strong>
-            — only one should be retained as a model feature. Rainy days and rainfall_mm show a strong positive
-            correlation (≈ 0.75), but the scatter reveals substantial variance: some extreme events compress
-            very high rainfall into very few days, the hallmark of convective flash-flood events.
-            The pairplot KDE diagonals confirm that Excess and Scanty categories form clearly separable distributions
-            on all key variables — a promising signal for classification-based drought and flood early-warning models.
-        </div>""", unsafe_allow_html=True)
-
-
-# ── Footer ─────────────────────────────────────────────────────────────────────
-st.markdown("---")
-if dashboard == "🌀 Cyclone Dashboard":
-    footer_text = "🌀 Cyclone EDA · Indian Ocean Cyclone Dataset 1990–2023 · Streamlit + Matplotlib + Seaborn"
-elif dashboard == "🌡️ Heatwave & Coldwave Dashboard":
-    footer_text = "🌡️ Heatwave & Coldwave EDA · India Extreme Temperature Dataset 1980–2023 · Streamlit + Matplotlib + Seaborn"
-elif dashboard == "🌫️ Air Quality Index Dashboard":
-    footer_text = "🌫️ AQI EDA · India Air Quality Index Dataset 2015–2023 · Streamlit + Matplotlib + Seaborn"
-else:
-    footer_text = "🌧️ Rainfall EDA · India Monthly Rainfall Dataset 1901–2023 · Streamlit + Matplotlib + Seaborn"
-
-st.markdown(f"""
-<div style="text-align:center; color: rgba(255,255,255,0.3); font-size: 0.8rem; padding: 1rem 0;">
-    {footer_text}
-</div>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True,
+)
