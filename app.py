@@ -709,8 +709,8 @@ elif dashboard == "🌫️ Air Quality Index Dashboard":
             "Chart 1 · AQI Category Distribution — Donut Chart",
             "badge-aqi", "Donut Chart",
             "Overall proportion of all six AQI categories (Good → Severe) across the full 9-year record. The hollow centre displays total record count — an instant baseline before deeper analysis. <b>Satisfactory and Moderate together dominate</b>, signalling persistent mid-level pollution pressure across India's monitoring network.",
-            "AQI_CHARTS/01_category_donut.png",
-            "📂 Chart not found: AQI_CHARTS/01_category_donut.png — run aqi_eda notebook first.")
+            "CHARTS/01_category_donut.png",
+            "📂 Chart not found: CHARTS/01_category_donut.png — run aqi_eda notebook first.")
         st.markdown("""<div class="insight-aqi">
             💡 <strong>Key Insight:</strong> Satisfactory (39.3%) and Moderate (35.1%) together account for nearly
             <strong>75% of all readings</strong>. Severe days represent only 0.7% of records but are heavily concentrated
@@ -728,19 +728,19 @@ elif dashboard == "🌫️ Air Quality Index Dashboard":
                 "Chart 2 · Annual Average AQI Trend by Zone (2015–2023)",
                 "badge-trend", "Line + Area Chart",
                 "Mean AQI tracked year-on-year for each geographic zone with shaded fills encoding cumulative air-quality pressure. The <b>2020 dip is unmistakable</b> across all zones — a direct COVID-19 lockdown signal. The subsequent rebound trajectory tells the story of India's post-lockdown pollution recovery.",
-                "AQI_CHARTS/02_annual_aqi_trend.png")
+                "CHARTS/02_annual_aqi_trend.png")
         with col2:
             show_chart("chart-card-aqi",
                 "Chart 3 · Monthly Seasonality — Polar Bar by Zone",
                 "badge-aqi", "Polar Bar Chart",
                 "12 months mapped onto a polar wheel with bars per zone. The sharp <b>winter spike (Oct–Feb)</b> captures India's biomass burning and temperature-inversion season; the <b>monsoon dip (Jun–Sep)</b> confirms wet scavenging of particulates as a natural seasonal cleanser.",
-                "AQI_CHARTS/03_monthly_polar.png")
+                "CHARTS/03_monthly_polar.png")
 
         show_chart("chart-card-aqi",
             "Chart 6 · Year × Month Mean AQI Heatmap",
             "badge-corr", "2D Heatmap",
             "Every cell = mean AQI for that year–month pair. The bright <b>winter band (Nov–Jan)</b> running across all nine years is unmistakable. The noticeably cooler 2020 row validates the lockdown effect. Aug–Sep cells are consistently the lightest — the cleaner months driven by monsoon rainfall.",
-            "AQI_CHARTS/06_year_month_heatmap.png")
+            "CHARTS/06_year_month_heatmap.png")
 
         st.markdown("""<div class="insight-aqi">
             💡 <strong>Temporal Insight:</strong> January is consistently the worst month, with mean AQI often
@@ -757,19 +757,19 @@ elif dashboard == "🌫️ Air Quality Index Dashboard":
             "Chart 4 · AQI Distribution by Category & Zone — Side-by-Side Violin + Strip",
             "badge-dist", "Violin + Strip Plot",
             "Violin width = record density at each AQI level; white strip dots = individual readings. The left panel confirms category thresholds are internally consistent. The right panel reveals how <b>North and East zones consistently skew higher</b> than South, reflecting the Indo-Gangetic plain's geographic pollution trap.",
-            "AQI_CHARTS/04_aqi_violin.png")
+            "CHARTS/04_aqi_violin.png")
 
         show_chart("chart-card-aqi",
             "Chart 5 · PM2.5 vs AQI — Bubble Scatter (Bubble Size = PM10)",
             "badge-poll", "Bubble Scatter",
             "Each point sits at the intersection of PM2.5 concentration and AQI. Bubble size encodes PM10 load; colour encodes zone. Stations annotated in red are the <b>top-4 all-time worst readings</b>. The strong linear cluster confirms PM2.5 as the dominant AQI driver — a critical finding for pollution control targeting.",
-            "AQI_CHARTS/05_pm25_aqi_bubble.png")
+            "CHARTS/05_pm25_aqi_bubble.png")
 
         show_chart("chart-card-aqi",
             "Chart 9 · AQI Category vs Dominant Pollutant — Cross-tabulation Heatmap",
             "badge-corr", "Cross-tab Heatmap",
             "Maps dominant pollutant type against observed AQI category. PM2.5 dominating the <b>Severe row</b> confirms fine particulate matter as the primary culprit at the worst end of the scale. NO2 dominance in Good/Satisfactory rows reveals traffic-origin baseline pollution that persists even on cleaner days.",
-            "AQI_CHARTS/09_category_pollutant_heatmap.png")
+            "CHARTS/09_category_pollutant_heatmap.png")
 
         st.markdown("""<div class="insight-aqi">
             💡 <strong>Pollutant Insight:</strong> PM2.5 is the dominant pollutant in <strong>55.6% of all readings</strong>
@@ -786,13 +786,13 @@ elif dashboard == "🌫️ Air Quality Index Dashboard":
             "Chart 7 · Top 15 Most Polluted Stations — Mean AQI (2015–2023)",
             "badge-poll", "Horizontal Bar Chart",
             "Colour-coded by zone, annotated with mean AQI and zone label. Reveals which specific monitoring stations have borne the <b>highest chronic pollution burden</b> over the 9-year period — directly informing targeted intervention priorities for regulators and urban planners.",
-            "AQI_CHARTS/07_top15_stations.png")
+            "CHARTS/07_top15_stations.png")
 
         show_chart("chart-card-aqi",
             "Chart 8 · State-wise AQI Category Breakdown — Stacked Horizontal Bar",
             "badge-geo", "Stacked Horizontal Bar",
             "Stacks all six AQI category counts per state. A state dominated by green (Good/Satisfactory) faces low chronic risk; dominance of red/purple (Poor/Very Poor/Severe) flags a <b>public health priority</b>. Directly supports state-level pollution control and CPCB enforcement prioritisation.",
-            "AQI_CHARTS/08_state_category_stacked.png")
+            "CHARTS/08_state_category_stacked.png")
 
         st.markdown("""<div class="insight-aqi">
             💡 <strong>Geographic Insight:</strong> <strong>North zone stations</strong> occupy the top positions for
@@ -810,19 +810,19 @@ elif dashboard == "🌫️ Air Quality Index Dashboard":
             "Chart 10 · AQI Distribution by Year & Zone — Grouped Boxplot",
             "badge-corr", "Grouped Boxplot",
             "Grouped boxes compare zone-level AQI spread for each year. The <b>2020 box shift downward</b> across all zones marks the lockdown period. Widening IQR in recent years may indicate increasing AQI variability — more extreme both good and bad days — reflecting intensifying seasonal pollution cycles.",
-            "AQI_CHARTS/10_aqi_year_zone_box.png")
+            "CHARTS/10_aqi_year_zone_box.png")
 
         show_chart("chart-card-aqi",
             "Chart 11 · Pollutant Concentration Distribution — KDE + Histogram",
             "badge-dist", "KDE + Histogram",
             "Overlapping histograms and smooth KDE curves for PM2.5, PM10, and NO2 with annotated mean and median lines. The <b>longer right tail for PM2.5</b> indicates chronic high-load events that push AQI into Poor/Severe range and dominate public health impact far beyond what the median concentration would suggest.",
-            "AQI_CHARTS/11_pollutant_kde.png")
+            "CHARTS/11_pollutant_kde.png")
 
         show_chart("chart-card-aqi",
             "Chart 12 · Pollutant Correlation Matrix — Lower Triangle Heatmap",
             "badge-corr", "Correlation Heatmap",
             "Pearson correlations between AQI and all six pollutants (lower triangle only). <b>Strong PM2.5–AQI and PM10–AQI correlations</b> confirm particulate dominance. The weak or negative O3 (ozone) correlation reflects its photochemical origin — rising with sunlight intensity precisely when other combustion pollutants may drop.",
-            "AQI_CHARTS/12_pollutant_correlation.png")
+            "CHARTS/12_pollutant_correlation.png")
 
         st.markdown("""<div class="insight-aqi">
             💡 <strong>Correlation Insight:</strong> PM2.5 shows the <strong>strongest positive correlation with AQI (≈ 0.93)</strong>,
